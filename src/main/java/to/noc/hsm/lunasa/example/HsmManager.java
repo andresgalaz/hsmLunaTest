@@ -55,7 +55,7 @@ public class HsmManager {
     }
 
     public static void login() throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException {
-    	slotManager.logExternal(0, "Test C2C");
+    	slotManager.logExternal(0, "lunastore");
         slotManager.login(partitionName, partitionPass);
         keyStore = KeyStore.getInstance("Luna");
         keyStore.load(null, null);
