@@ -1,15 +1,20 @@
 package to.noc.hsm.lunasa.example;
 
-import com.safenetinc.luna.LunaSlotManager;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.*;
+import java.security.Key;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.Security;
+import java.security.UnrecoverableEntryException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.Properties;
+
+import com.safenetinc.luna.LunaSlotManager;
 
 /*
  *  This class looks for a file named "partition.properties" in the current
