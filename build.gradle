@@ -19,6 +19,7 @@ repositories {
 dependencies {
     compile 'com.google.guava:guava:18.0'              // provides Bytes.indexOf
     compile 'org.apache.commons:commons-lang3:3.3.2'   // provides SerializationUtils
+    compile fileTree(dir: 'lib', include: 'axis.jar')
     compile fileTree(dir: LUNA_LIB_DIR, include: 'LunaProvider.jar')
 }
 
