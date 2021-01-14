@@ -3,7 +3,7 @@ apply plugin: 'eclipse'
 
 tasks.eclipse.dependsOn(cleanEclipse)
 
-String LUNA_LIB_DIR = '/usr/safenet/lunaclient/jsp/lib/'
+String LUNA_LIB_DIR = 'lib/'
 
 mainClassName = 'to.noc.hsm.lunasa.example.KeyWrappingExample'
 //mainClassName = 'to.noc.hsm.lunasa.example.WrappedKeySerializationExample'
@@ -19,7 +19,7 @@ repositories {
 dependencies {
     compile 'com.google.guava:guava:18.0'              // provides Bytes.indexOf
     compile 'org.apache.commons:commons-lang3:3.3.2'   // provides SerializationUtils
-    compile fileTree(dir: 'lib', include: 'axis.jar')
+    compile fileTree(dir: LUNA_LIB_DIR, include: 'axis.jar')
     compile fileTree(dir: LUNA_LIB_DIR, include: 'LunaProvider.jar')
 }
 
