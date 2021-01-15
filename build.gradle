@@ -5,10 +5,10 @@ tasks.eclipse.dependsOn(cleanEclipse)
 
 String LUNA_LIB_DIR = 'lib/'
 
-mainClassName = 'to.noc.hsm.lunasa.example.HsmManager'
+//mainClassName = 'to.noc.hsm.lunasa.example.HsmManager'
 //mainClassName = 'to.noc.hsm.lunasa.example.KeyWrappingExample'
 //mainClassName = 'to.noc.hsm.lunasa.example.WrappedKeySerializationExample'
-//mainClassName = 'to.noc.hsm.lunasa.example.KeyWrappingWithHsmGeneratedKeysExample'
+mainClassName = 'to.noc.hsm.lunasa.example.KeyWrappingWithHsmGeneratedKeysExample'
 sourceCompatibility = '1.7'
 
 applicationDefaultJvmArgs = ["-D=java.library.path=$LUNA_LIB_DIR"]
