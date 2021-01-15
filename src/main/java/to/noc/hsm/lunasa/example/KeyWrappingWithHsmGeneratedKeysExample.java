@@ -65,9 +65,7 @@ public class KeyWrappingWithHsmGeneratedKeysExample {
         //  OpenJDK handles AES 256 just fine, but I had to back this down to 128 for
         //  Oracle's JDK which, by default, has strong crypto disabled.
         //
-	out.println("==============================================");
         lunaKeyGenerator.init(256);
-	out.println("Se aumenta a 256");
         Key kek = lunaKeyGenerator.generateKey();
 
 
