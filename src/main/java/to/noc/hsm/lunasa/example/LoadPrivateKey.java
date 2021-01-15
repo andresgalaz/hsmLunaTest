@@ -37,6 +37,8 @@ public class LoadPrivateKey {
 		out.println("Load from file");
 		KeyStore ks = HsmManager.loadKey(is);
 
+		out.println("Lista Alias");
+		out.println("===========================================");
 		// List the aliases
 		Enumeration<String> aliases = ks.aliases();
 		for (; aliases.hasMoreElements();) {
@@ -51,6 +53,7 @@ public class LoadPrivateKey {
 			out.print(alias + ":");
 			out.println(b);
 		}
+		out.println("===========================================");
 
 		out.println("Load wrapped from file [BIN]");
 		Path path = Paths.get("/home/firmador/keys/wrappedKeyBin.b64");
