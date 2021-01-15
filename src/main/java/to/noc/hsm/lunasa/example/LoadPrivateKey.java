@@ -62,7 +62,7 @@ public class LoadPrivateKey {
 		//
 		// Unwrap the key
 		//
-		out.println("Init cipher usando kek");
+		out.println("Init cipher usando kek:" + kek);
 		lunaAesCbcCipher.init(Cipher.UNWRAP_MODE, kek, FIXED_128BIT_IV_FOR_TESTS);
 		out.println("Unwrapping ...");
 		LunaKey unwrappedKey = (LunaKey) lunaAesCbcCipher.unwrap(wrappedKey, "AES", Cipher.SECRET_KEY);
