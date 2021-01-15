@@ -52,16 +52,17 @@ public class LoadPrivateKey {
 			out.println(b);
 		}
 
+		out.println("Load wrapped from file [BIN]");
 		Path path = Paths.get("/home/firmador/keys/wrappedKeyBin.b64");
 		byte[] wrappedKey = Files.readAllBytes(path);
 
 		String password = "serverpwd";
 		final Key kek = (PrivateKey) ks.getKey("localhost", password.toCharArray());
-
 		Cipher lunaAesCbcCipher = Cipher.getInstance("AES/CBC/PKCS5Padding", "LunaProvider");
 		//
 		// Unwrap the key
 		//
+		out.println("Unwrapping ...]");
 		lunaAesCbcCipher.init(Cipher.UNWRAP_MODE, kek, FIXED_128BIT_IV_FOR_TESTS);
 		LunaKey unwrappedKey = (LunaKey) lunaAesCbcCipher.unwrap(wrappedKey, "AES", Cipher.SECRET_KEY);
 		out.println("Unwrapped key (in clear same as original): " + getHex(unwrappedKey.getEncoded()));
