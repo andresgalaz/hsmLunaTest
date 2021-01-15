@@ -57,7 +57,8 @@ public class LoadPrivateKey {
 		byte[] wrappedKey = Files.readAllBytes(path);
 
 		String password = "serverpwd";
-		final Key kek = (PrivateKey) ks.getKey("localhost", password.toCharArray());
+		// final Key kek = (PrivateKey) ks.getKey("localhost", password.toCharArray());
+		final Key kek = (PrivateKey) ks.getKey("localhost", HsmManager.getPartitionPass().toCharArray());
 		Cipher lunaAesCbcCipher = Cipher.getInstance("AES/CBC/PKCS5Padding", "LunaProvider");
 		//
 		// Unwrap the key

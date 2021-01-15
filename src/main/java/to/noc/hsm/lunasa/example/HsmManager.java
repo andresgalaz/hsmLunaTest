@@ -243,5 +243,9 @@ public class HsmManager {
 		keyStore.load(is, partitionPass.toCharArray());
 		return keyStore;
 	}
+
+	public static String getPartitionPass() {
+		return partitionPass;
+	}
 	
 }
