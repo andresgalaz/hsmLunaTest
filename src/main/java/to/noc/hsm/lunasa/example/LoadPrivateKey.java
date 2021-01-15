@@ -71,7 +71,10 @@ public class LoadPrivateKey {
 		FileInputStream is = new FileInputStream(fJks);
 
 		out.println("Load from file:" + cNombreAcrh);
-		KeyStore ks = HsmManager.loadKey(is);
+		KeyStore sr = KeyStore.getInstance("JKS"); ;
+		sr.load(is, "serverpwd".toCharArray());
+		
+		KeyStore ks = sr; // HsmManager.loadKey(is);
 		is.close();
 
 		out.println("Lista Alias");
