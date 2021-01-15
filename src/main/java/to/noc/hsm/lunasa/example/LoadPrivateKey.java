@@ -20,6 +20,8 @@ public class LoadPrivateKey {
 		String password = "serverpwd";
 		FileInputStream is = new FileInputStream(fJks);
 
+        HsmManager.login();
+		
 		KeyStore ks = KeyStore.getInstance("Luna");
 
 		ks.load(is, password.toCharArray());
