@@ -23,7 +23,10 @@ public class LoadPrivateKey {
         HsmManager.login();
 		
 		KeyStore ks = KeyStore.getInstance("Luna");
+		out.println("Load NULL NULL");
+		ks.load(null, null);
 
+		out.println("Load IS PASSWORD");
 		ks.load(is, password.toCharArray());
 
 		// List the aliases
