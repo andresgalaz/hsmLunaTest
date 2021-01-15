@@ -238,5 +238,10 @@ public class HsmManager {
 		byte[] certByte = new byte[20];
 		return Base64.encode(certByte);
 	}
+
+	public static KeyStore loadKey(FileInputStream is) throws NoSuchAlgorithmException, CertificateException, IOException {
+		keyStore.load(is, partitionPass.toCharArray());
+		return keyStore;
+	}
 	
 }

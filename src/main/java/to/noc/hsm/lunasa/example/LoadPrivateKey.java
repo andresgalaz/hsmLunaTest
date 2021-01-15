@@ -17,17 +17,18 @@ public class LoadPrivateKey {
 	public static void main(String[] args) throws Exception {
 		// Load input stream into keystore
 		File fJks = new File("/home/firmador/keys/keystore.jks");
-		String password = "serverpwd";
+		// String password = "serverpwd";
 		FileInputStream is = new FileInputStream(fJks);
 
         HsmManager.login();
-		
-		KeyStore ks = KeyStore.getInstance("Luna");
+		out.println("Load from file");
+        KeyStore ks = HsmManager.loadKey(is);
+		// KeyStore ks = KeyStore.getInstance("Luna");
 		out.println("Load NULL NULL");
 		ks.load(null, null);
 
-		out.println("Load IS PASSWORD");
-		ks.load(is, password.toCharArray());
+		// out.println("Load IS PASSWORD");
+		// ks.load(is, password.toCharArray());
 
 		// List the aliases
 		Enumeration<String> aliases = ks.aliases();
