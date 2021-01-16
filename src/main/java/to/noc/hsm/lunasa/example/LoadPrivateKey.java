@@ -50,7 +50,7 @@ public class LoadPrivateKey {
 		final Key kek = (PrivateKey) ks.getKey("localhost", password.toCharArray());
 		// final Key kek = (PrivateKey) ks.getKey("IM_SIERRAGORDA_FEA_G1.KP", HsmManager.getPartitionPass().toCharArray());
 		// Cipher lunaAesCbcCipher = Cipher.getInstance("AES/CBC/PKCS5Padding", "LunaProvider");
-		Cipher lunaAesCbcCipher = Cipher.getInstance("RSA", "LunaProvider");
+		Cipher lunaAesCbcCipher = Cipher.getInstance("RSA/CBC/PKCS5Padding", "LunaProvider");
 		//
 		// Unwrap the key
 		//
