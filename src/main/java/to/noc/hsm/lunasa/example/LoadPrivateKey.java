@@ -49,8 +49,8 @@ public class LoadPrivateKey {
 		String password = "serverpwd";
 		// final Key kek = (PrivateKey) ks.getKey("localhost", password.toCharArray());
 		final Key kek = (PrivateKey) ks.getKey("localhost", password.toCharArray());
-		// Cipher lunaAesCbcCipher = Cipher.getInstance("AES/CBC/PKCS5Padding", "LunaProvider");
-		Cipher lunaAesCbcCipher = Cipher.getInstance("RSA/CBC/PKCS5Padding", "LunaProvider");
+		Cipher lunaAesCbcCipher = Cipher.getInstance("AES/CBC/PKCS5Padding", "LunaProvider");
+		// Cipher lunaAesCbcCipher = Cipher.getInstance("RSA/CBC/PKCS5Padding", "LunaProvider");
 		//
 		// Unwrap the key
 		//
