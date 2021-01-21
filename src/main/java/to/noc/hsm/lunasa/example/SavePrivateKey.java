@@ -53,6 +53,8 @@ public class SavePrivateKey {
 
 		KeyStore keyStore = KeyStore.getInstance("Luna");
 		keyStore.load(null, null);
+		Key kf = keyStore.getKey(me.getAlias(), null);
+		out.println("kf[" + kf.getClass().getName() + "]:");
 
 	}
 
