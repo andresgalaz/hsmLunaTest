@@ -35,10 +35,7 @@ public class SavePrivateKey {
 		me.print(me.getPrivateKey());
 
 		// Limpia
-		for (int i = 1; i < 100; i++) {
-			out.println("Deleting i=" + i);
-			HsmManager.deleteKey(me.getAlias());
-		}
+		HsmManager.deleteKey(me.getAlias());
 		// Graba
 		HsmManager.saveRsaKey(me.getAlias(), me.getPrivateKey(), new Certificate[] { me.getCertificate() });
 		// Recupera
@@ -48,7 +45,6 @@ public class SavePrivateKey {
 		out.println(kHsm.getAlgorithm());
 		out.println(kHsm.GetAlias());
 		out.println(kHsm.getSlot());
-		out.println(kHsm.getUsageCount());
 		out.println(kHsm.getUsageLimit());
 		out.println(kHsm.getModulus());
 		out.println(kHsm.getPrivateExponent());
