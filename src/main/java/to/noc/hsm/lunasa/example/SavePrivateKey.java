@@ -56,9 +56,6 @@ public class SavePrivateKey {
 		deleteKey(me.getAlias() + "_M");
 		deleteKey(me.getAlias() + "_E");
 		// Graba
-		if (bHayHsm)
-			keyStore.setKeyEntry(me.getAlias() + "_M", me.getCertificate().getPublicKey(), null, null);
-
 		KeyFactory keyFactory = KeyFactory.getInstance("DSA");
 		DSAPublicKeySpec dsa = new DSAPublicKeySpec(modulus, exponent, null, null);
 		// RSAPrivateKeySpec rsaPrivateKeySpec = new RSAPrivateKeySpec(exponent, modulus);
