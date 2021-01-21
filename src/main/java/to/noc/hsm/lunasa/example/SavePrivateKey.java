@@ -5,18 +5,20 @@ import static java.lang.System.out;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.security.Key;
+import java.security.KeyFactory;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
-import java.security.PublicKey;
 import java.security.UnrecoverableEntryException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.interfaces.RSAPublicKey;
+import java.security.spec.RSAPrivateKeySpec;
 import java.util.Enumeration;
 
 import com.safenetinc.luna.provider.key.LunaPrivateKeyRsa;
@@ -24,7 +26,7 @@ import com.safenetinc.luna.provider.key.LunaPrivateKeyRsa;
 public class SavePrivateKey {
 	private static KeyStore keyStore;
 	private Certificate certificate;
-	private Key privateKey;
+	private PrivateKey privateKey;
 	private String alias;
 
 	public static void main(String[] args) throws Exception {
@@ -42,20 +44,26 @@ public class SavePrivateKey {
 
 		out.println("\n");
 		me.loadCertificado(args[0], args[1]);
-		me.print((PublicKey)me.getCertificate().getPublicKey());
 		out.println("alias:" + me.getAlias());
-		me.print((PrivateKey)me.getPrivateKey());
+		me.print(me.getPrivateKey());
 
 		// Limpia
 		deleteKey(me.getAlias());
 		// Graba
 		saveKey(me.getAlias(), me.getPrivateKey(), new Certificate[] { me.getCertificate() });
 		// Recupera
-		Key kLoc = getSavedKey(me.getAlias());
-		me.print((LunaPrivateKeyRsa)kLoc);
+		LunaPrivateKeyRsa kLoc = (LunaPrivateKeyRsa) getSavedKey(me.getAlias());
+		me.print(kLoc);
 
 		HsmManager.logout();
 
+		BigInteger exponent = ((RSAPublicKey) me.getCertificate().getPublicKey()).getPublicExponent();
+		BigInteger modulus = kLoc.getModulus();
+
+		KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+		RSAPrivateKeySpec rsaPrivateKeySpec = new RSAPrivateKeySpec(modulus, exponent);
+		PrivateKey kFin = keyFactory.generatePrivate(rsaPrivateKeySpec);
+		me.print(kFin);
 	}
 
 	public void loadCertificado(String filename, String clave) throws KeyStoreException, NoSuchAlgorithmException,
@@ -71,7 +79,7 @@ public class SavePrivateKey {
 		while (e.hasMoreElements()) {
 			setAlias(e.nextElement());
 		}
-		setPrivateKey(p12.getKey(getAlias(), clave.toCharArray()));
+		setPrivateKey((PrivateKey) p12.getKey(getAlias(), clave.toCharArray()));
 		setCertificate(p12.getCertificate(getAlias()));
 	}
 
@@ -91,19 +99,12 @@ public class SavePrivateKey {
 	public void print(LunaPrivateKeyRsa k) {
 		out.println("Class:" + k.getClass().getName());
 		out.println("Modulus:" + k.getModulus().toString());
-		out.println("Exponent:" + k.getPrivateExponent().toString());
+		// out.println("Exponent:" + k.getPrivateExponent().toString());
 	}
 
 	public void print(PrivateKey k) {
 		out.println("Class:" + k.getClass().getName());
 		RSAPrivateCrtKey rsaKey = (RSAPrivateCrtKey) k;
-		out.println("Modulus:" + rsaKey.getModulus().toString());
-		out.println("Exponent:" + rsaKey.getPublicExponent().toString());
-	}
-
-	public void print(PublicKey k) {
-		out.println("Class:" + k.getClass().getName());
-		RSAPublicKey rsaKey = (RSAPublicKey) k;
 		out.println("Modulus:" + rsaKey.getModulus().toString());
 		out.println("Exponent:" + rsaKey.getPublicExponent().toString());
 	}
@@ -116,11 +117,11 @@ public class SavePrivateKey {
 		this.certificate = certificate;
 	}
 
-	public Key getPrivateKey() {
+	public PrivateKey getPrivateKey() {
 		return privateKey;
 	}
 
-	public void setPrivateKey(Key privateKey) {
+	public void setPrivateKey(PrivateKey privateKey) {
 		this.privateKey = privateKey;
 	}
 
