@@ -102,22 +102,12 @@ public class HsmManager {
 		return keyStore.getKey(alias, null);
 	}
 
-	public static Key getSavedKey2(String alias)
-			throws UnrecoverableEntryException, NoSuchAlgorithmException, KeyStoreException {
-		return keyStore.getKey(alias, partitionPass.toCharArray());
-	}
-
 	public static void saveKey(String alias, Key key) throws KeyStoreException {
 		keyStore.setKeyEntry(alias, key, null, null);
 	}
 
 	public static void saveRsaKey(String alias, Key key, Certificate[] chain) throws KeyStoreException {
 		keyStore.setKeyEntry(alias, key, null, chain);
-	}
-
-	public static void saveRsaKey2(String alias, Key key, Certificate[] chain) throws KeyStoreException {
-		keyStore.setKeyEntry(alias, key.getEncoded(), chain);
-		// keyStore.setKeyEntry(alias, key, partitionPass.toCharArray(), chain);
 	}
 
 	public static void deleteKey(String alias) throws KeyStoreException {
