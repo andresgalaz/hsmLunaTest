@@ -53,7 +53,7 @@ public class SavePrivateKey {
 		saveKey(me.getAlias(), me.getPrivateKey(), new Certificate[] { me.getCertificate() });
 		// Recupera
 		Key kLoc = getSavedKey(me.getAlias());
-		me.print(kLoc);
+		me.print((LunaPrivateKeyRsa)kLoc);
 
 		HsmManager.logout();
 
