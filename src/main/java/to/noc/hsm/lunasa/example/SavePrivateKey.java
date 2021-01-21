@@ -42,10 +42,18 @@ public class SavePrivateKey {
 		// Graba
 		HsmManager.saveRsaKey(me.getAlias(), me.getPrivateKey(), new Certificate[] { me.getCertificate() });
 		// Recupera
-		Key kHsm = HsmManager.getSavedKey(me.getAlias());
-
+		com.safenetinc.luna.provider.key.LunaPrivateKeyRsa kHsm = (com.safenetinc.luna.provider.key.LunaPrivateKeyRsa)HsmManager.getSavedKey(me.getAlias());
 		out.println("kHsm[" + me.getPrivateKey().getClass().getName() + "]:");
-		me.print(kHsm);
+		out.println(kHsm.IsKeyPersistent());
+		out.println(kHsm.getAlgorithm());
+		out.println(kHsm.GetAlias());
+		out.println(kHsm.getSlot());
+		out.println(kHsm.getUsageCount());
+		out.println(kHsm.getUsageLimit());
+		out.println(kHsm.getModulus());
+		out.println(kHsm.getPrivateExponent());
+
+		// me.print(kHsm);
 		HsmManager.logout();
 	}
 
