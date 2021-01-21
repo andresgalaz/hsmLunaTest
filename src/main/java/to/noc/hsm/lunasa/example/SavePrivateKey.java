@@ -14,6 +14,7 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.interfaces.RSAPrivateCrtKey;
+import java.security.interfaces.RSAPublicKey;
 import java.util.Enumeration;
 
 import com.safenetinc.luna.provider.key.LunaPrivateKeyRsa;
@@ -40,7 +41,7 @@ public class SavePrivateKey {
 		out.println("\n");
 		me.loadCertificado(args[0], args[1]);
 		out.println("alias:" + me.getAlias());
-		me.setPrivateKey( me.getCertificate().getPublicKey());
+		me.setPrivateKey(me.getCertificate().getPublicKey());
 		me.print(me.getPrivateKey());
 
 		// Limpia
@@ -93,7 +94,8 @@ public class SavePrivateKey {
 
 	public void print(Key k) {
 		out.println("Class:" + k.getClass().getName());
-		RSAPrivateCrtKey rsaKey = (RSAPrivateCrtKey) k;
+		// RSAPrivateCrtKey rsaKey = (RSAPrivateCrtKey) k;
+		RSAPublicKey rsaKey = (RSAPublicKey) k;
 		out.println("Modulus:" + rsaKey.getModulus().toString());
 		out.println("Exponent:" + rsaKey.getPublicExponent().toString());
 	}
