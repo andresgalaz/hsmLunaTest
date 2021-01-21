@@ -5,6 +5,7 @@ import static java.lang.System.out;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.security.Key;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -30,8 +31,10 @@ public class SavePrivateKey {
 		me.loadCertificado(args[0], args[1]);
 		out.println("alias:" + me.getAlias());
 		out.println("privateKey:" + me.getPrivateKey());
-		out.println("certificate:" + me.getCertificate());
+		// out.println("certificate:" + me.getCertificate());
 		HsmManager.saveRsaKey(me.getAlias(), me.getPrivateKey(), new Certificate[] {me.getCertificate()});
+		Key kHsm = HsmManager.getSavedKey(me.getAlias());
+		out.println("kHsm:" + kHsm);
 		HsmManager.logout();
 	}
 
