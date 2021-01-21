@@ -51,7 +51,8 @@ public class SavePrivateKey {
 		// Limpia
 		HsmManager.deleteKey(me.getAlias());
 		// Graba
-		HsmManager.saveRsaKey(me.getAlias(), me.getPrivateKey(), new Certificate[] { me.getCertificate() });
+		// HsmManager.saveRsaKey(me.getAlias(), me.getPrivateKey(), new Certificate[] { me.getCertificate() });
+		HsmManager.saveKey(me.getAlias(), me.getPrivateKey());
 		// Recupera
 		com.safenetinc.luna.provider.key.LunaPrivateKeyRsa kHsm = (com.safenetinc.luna.provider.key.LunaPrivateKeyRsa) HsmManager
 				.getSavedKey(me.getAlias());
@@ -107,10 +108,10 @@ public class SavePrivateKey {
 		out.println("Exponent:" + cExponent);
 	}
 
-	private static PrivateKey createPrivateKey(String cModulus, String cPrivateExponent)
-			throws NoSuchAlgorithmException, InvalidKeySpecException {
-		return createPrivateKey(new BigInteger(cModulus), new BigInteger(cPrivateExponent));
-	}
+//	private static PrivateKey createPrivateKey(String cModulus, String cPrivateExponent)
+//			throws NoSuchAlgorithmException, InvalidKeySpecException {
+//		return createPrivateKey(new BigInteger(cModulus), new BigInteger(cPrivateExponent));
+//	}
 
 	private static PrivateKey createPrivateKey(BigInteger modulus, BigInteger privateExponent)
 			throws NoSuchAlgorithmException, InvalidKeySpecException {
