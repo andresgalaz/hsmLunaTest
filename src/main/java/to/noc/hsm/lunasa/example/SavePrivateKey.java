@@ -9,6 +9,8 @@ import java.security.Key;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.UnrecoverableEntryException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
@@ -41,8 +43,9 @@ public class SavePrivateKey {
 		out.println("\n");
 		me.loadCertificado(args[0], args[1]);
 		out.println("alias:" + me.getAlias());
+		me.print((PrivateKey)me.getPrivateKey());
 		me.setPrivateKey(me.getCertificate().getPublicKey());
-		me.print(me.getPrivateKey());
+		me.print((PublicKey)me.getPrivateKey());
 
 		// Limpia
 		deleteKey(me.getAlias());
@@ -92,9 +95,15 @@ public class SavePrivateKey {
 		out.println("Exponent:" + k.getPrivateExponent().toString());
 	}
 
-	public void print(Key k) {
+	public void print(PrivateKey k) {
 		out.println("Class:" + k.getClass().getName());
-		// RSAPrivateCrtKey rsaKey = (RSAPrivateCrtKey) k;
+		RSAPrivateCrtKey rsaKey = (RSAPrivateCrtKey) k;
+		out.println("Modulus:" + rsaKey.getModulus().toString());
+		out.println("Exponent:" + rsaKey.getPublicExponent().toString());
+	}
+
+	public void print(PublicKey k) {
+		out.println("Class:" + k.getClass().getName());
 		RSAPublicKey rsaKey = (RSAPublicKey) k;
 		out.println("Modulus:" + rsaKey.getModulus().toString());
 		out.println("Exponent:" + rsaKey.getPublicExponent().toString());
