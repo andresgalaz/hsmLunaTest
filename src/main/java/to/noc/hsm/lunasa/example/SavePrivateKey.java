@@ -29,6 +29,8 @@ public class SavePrivateKey {
 		SavePrivateKey me = new SavePrivateKey();
 
 		HsmManager.login();
+		HsmManager.setSecretKeysExtractable(true);
+		
 		me.loadCertificado(args[0], args[1]);
 		out.println("alias:" + me.getAlias());
 		out.println("privateKey[" + me.getPrivateKey().getClass().getName() + "]:");
