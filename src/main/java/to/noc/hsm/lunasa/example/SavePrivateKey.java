@@ -57,7 +57,7 @@ public class SavePrivateKey {
 		deleteKey(me.getAlias() + "_E");
 		// Graba
 		KeyFactory keyFactory = KeyFactory.getInstance("DSA");
-		DSAPublicKeySpec dsa = new DSAPublicKeySpec(modulus, exponent, null, null);
+		DSAPublicKeySpec dsa = new DSAPublicKeySpec(modulus, exponent, BigInteger.TEN, BigInteger.TEN);
 		// RSAPrivateKeySpec rsaPrivateKeySpec = new RSAPrivateKeySpec(exponent, modulus);
 		Key kFin = keyFactory.generatePublic(dsa);
 		keyStore.setKeyEntry(me.getAlias() + "_E", kFin, null, null);
