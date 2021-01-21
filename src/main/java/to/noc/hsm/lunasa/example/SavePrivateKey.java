@@ -9,6 +9,7 @@ import java.math.BigInteger;
 import java.security.Key;
 import java.security.KeyFactory;
 import java.security.KeyStore;
+import java.security.KeyStore.Entry;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
@@ -50,7 +51,10 @@ public class SavePrivateKey {
 		// Limpia
 		deleteKey(me.getAlias());
 		// Graba
-		saveKey(me.getAlias(), me.getPrivateKey(), new Certificate[] { me.getCertificate() });
+		// saveKey(me.getAlias(), me.getPrivateKey(), new Certificate[] { me.getCertificate() });
+		KeyStore.Entry e = (Entry) me.getPrivateKey();
+		keyStore.setEntry(me.getAlias(), e, null);
+		
 		// Recupera
 		LunaPrivateKeyRsa kLoc = (LunaPrivateKeyRsa) getSavedKey(me.getAlias());
 		me.print(kLoc);
