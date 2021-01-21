@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.Key;
+import java.security.KeyFactory;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -13,6 +14,7 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.interfaces.RSAPrivateCrtKey;
+import java.security.spec.RSAPrivateCrtKeySpec;
 import java.util.Enumeration;
 
 import com.safenetinc.luna.provider.key.LunaKey;
@@ -42,7 +44,10 @@ public class SavePrivateKey {
 		// Limpia
 		HsmManager.deleteKey(me.getAlias());
 		// Graba
-		HsmManager.saveRsaKey(me.getAlias(), me.getPrivateKey(), new Certificate[] { me.getCertificate() });
+		KeyFactory keyFac = KeyFactory.getInstance("RSA");
+		RSAPrivateCrtKeySpec pkSpec = keyFac.getKeySpec(me.getPrivateKey(), RSAPrivateCrtKeySpec.class);
+		
+		HsmManager.saveRsaKey(me.getAlias(), (Key) pkSpec, new Certificate[] { me.getCertificate() });
 		// Recupera
 		LunaPrivateKeyRsa kHsm = (LunaPrivateKeyRsa) HsmManager.getSavedKey(me.getAlias());
 		out.println("kHsm[" + kHsm.getClass().getName() + "]:");
@@ -50,11 +55,6 @@ public class SavePrivateKey {
 		out.println("kLoc[" + kLoc.getClass().getName() + "]:");
 
 		HsmManager.logout();
-
-		KeyStore keyStore = KeyStore.getInstance("Luna");
-		keyStore.load(null, null);
-		Key kf = keyStore.getKey(me.getAlias(), null);
-		out.println("kf[" + kf.getClass().getName() + "]:");
 
 	}
 
