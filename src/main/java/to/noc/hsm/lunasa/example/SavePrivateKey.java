@@ -16,6 +16,7 @@ import java.security.interfaces.RSAPrivateCrtKey;
 import java.util.Enumeration;
 
 import com.safenetinc.luna.provider.key.LunaKey;
+import com.safenetinc.luna.provider.key.LunaPrivateKeyRsa;
 
 public class SavePrivateKey {
 	private Certificate certificate;
@@ -45,7 +46,7 @@ public class SavePrivateKey {
 		// Recupera
 		Key kLoc = LunaKey.LocateKeyByAlias(me.getAlias(), 0);
 		out.println("kLoc[" + kLoc.getClass().getName() + "]:");
-		RSAPrivateCrtKey k = (RSAPrivateCrtKey) kLoc;
+		LunaPrivateKeyRsa k = (LunaPrivateKeyRsa) kLoc;
 		out.println("k[" + k.getClass().getName() + "]:");
 
 		HsmManager.logout();
