@@ -9,7 +9,6 @@ import java.math.BigInteger;
 import java.security.Key;
 import java.security.KeyFactory;
 import java.security.KeyStore;
-import java.security.KeyStore.Entry;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
@@ -18,7 +17,6 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
 import java.security.spec.RSAPrivateKeySpec;
 import java.util.Enumeration;
 
@@ -48,30 +46,27 @@ public class SavePrivateKey {
 		out.println("alias:" + me.getAlias());
 		me.print(me.getPrivateKey());
 
+		BigInteger exponent = ((RSAPrivateKey) me.getPrivateKey()).getPrivateExponent();
+		BigInteger modulus = ((RSAPrivateKey) me.getPrivateKey()).getModulus();
+
+		KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+		RSAPrivateKeySpec rsaPrivateKeySpec = new RSAPrivateKeySpec(exponent, modulus);
+		PrivateKey kFin = keyFactory.generatePrivate(rsaPrivateKeySpec);
+		me.print(kFin);
+
 		// Limpia
 		deleteKey(me.getAlias());
 		// Graba
-		// saveKey(me.getAlias(), me.getPrivateKey(), new Certificate[] { me.getCertificate() });
-		KeyStore.Entry e = (Entry) me.getPrivateKey();
-		keyStore.setEntry(me.getAlias(), e, null);
-		
+		saveKey(me.getAlias(), me.getPrivateKey(), new Certificate[] { me.getCertificate() });
+
 		// Recupera
 		LunaPrivateKeyRsa kLoc = (LunaPrivateKeyRsa) getSavedKey(me.getAlias());
 		me.print(kLoc);
-		
+
 		Certificate cer = keyStore.getCertificate(me.getAlias());
 		out.println(cer);
 
-
 		HsmManager.logout();
-
-		BigInteger exponent = ((RSAPublicKey) me.getCertificate().getPublicKey()).getPublicExponent();
-		BigInteger modulus = kLoc.getModulus();
-
-		KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-		RSAPrivateKeySpec rsaPrivateKeySpec = new RSAPrivateKeySpec(modulus, exponent);
-		PrivateKey kFin = keyFactory.generatePrivate(rsaPrivateKeySpec);
-		me.print(kFin);
 	}
 
 	public void loadCertificado(String filename, String clave) throws KeyStoreException, NoSuchAlgorithmException,
