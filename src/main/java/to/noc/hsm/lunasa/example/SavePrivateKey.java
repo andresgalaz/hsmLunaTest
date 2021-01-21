@@ -47,7 +47,7 @@ public class SavePrivateKey {
 		// Graba
 		saveKey(me.getAlias(), me.getPrivateKey(), new Certificate[] { me.getCertificate() });
 		// Recupera
-		Key k0 = keyStore.getKey(me.getAlias(), null);
+		LunaPrivateKeyRsa k0 = (LunaPrivateKeyRsa) keyStore.getKey(me.getAlias(), null);
 		me.print(k0);
 
 		Key kLoc = getSavedKey(me.getAlias());
