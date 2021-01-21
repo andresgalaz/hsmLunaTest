@@ -17,13 +17,14 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.interfaces.RSAPrivateKey;
-import java.security.spec.RSAPrivateKeySpec;
+import java.security.spec.DSAPublicKeySpec;
 import java.util.Enumeration;
 
 import com.safenetinc.luna.provider.key.LunaPrivateKeyRsa;
 
 public class SavePrivateKey {
 	private static KeyStore keyStore;
+	private static boolean bHayHsm = true;
 	private Certificate certificate;
 	private PrivateKey privateKey;
 	private String alias;
@@ -35,11 +36,12 @@ public class SavePrivateKey {
 		}
 		SavePrivateKey me = new SavePrivateKey();
 
-		HsmManager.login();
-		HsmManager.setSecretKeysExtractable(true);
-
-		keyStore = KeyStore.getInstance("Luna");
-		keyStore.load(null, null);
+		if (bHayHsm) {
+			HsmManager.login();
+			HsmManager.setSecretKeysExtractable(true);
+			keyStore = KeyStore.getInstance("Luna");
+			keyStore.load(null, null);
+		}
 
 		out.println("\n");
 		me.loadCertificado(args[0], args[1]);
@@ -51,19 +53,20 @@ public class SavePrivateKey {
 
 		// Limpia
 		deleteKey(me.getAlias());
-		deleteKey(me.getAlias()+"_M");
-		deleteKey(me.getAlias()+"_E");
+		deleteKey(me.getAlias() + "_M");
+		deleteKey(me.getAlias() + "_E");
 		// Graba
-		keyStore.setKeyEntry(me.getAlias()+"_M", me.getCertificate().getPublicKey(), null, null);
+		if (bHayHsm)
+			keyStore.setKeyEntry(me.getAlias() + "_M", me.getCertificate().getPublicKey(), null, null);
 
-		KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-		RSAPrivateKeySpec rsaPrivateKeySpec = new RSAPrivateKeySpec(exponent, modulus);
-		Key kFin = keyFactory.generatePublic(rsaPrivateKeySpec);
-		keyStore.setKeyEntry(me.getAlias()+"_E", kFin, null, null);
-		
+		KeyFactory keyFactory = KeyFactory.getInstance("DSA");
+		DSAPublicKeySpec dsa = new DSAPublicKeySpec(modulus, exponent, null, null);
+		// RSAPrivateKeySpec rsaPrivateKeySpec = new RSAPrivateKeySpec(exponent, modulus);
+		Key kFin = keyFactory.generatePublic(dsa);
+		keyStore.setKeyEntry(me.getAlias() + "_E", kFin, null, null);
 
-		
-		// saveKey(me.getAlias(), me.getPrivateKey(), new Certificate[] { me.getCertificate() });
+		// saveKey(me.getAlias(), me.getPrivateKey(), new Certificate[] {
+		// me.getCertificate() });
 
 		// Recupera
 		LunaPrivateKeyRsa kLoc = (LunaPrivateKeyRsa) getSavedKey(me.getAlias());
@@ -93,7 +96,8 @@ public class SavePrivateKey {
 	}
 
 	public static void deleteKey(String alias) throws KeyStoreException {
-		keyStore.deleteEntry(alias);
+		if (bHayHsm)
+			keyStore.deleteEntry(alias);
 	}
 
 	public static void saveKey(String alias, Key key, Certificate[] chain) throws KeyStoreException {
