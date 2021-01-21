@@ -5,7 +5,9 @@ import static java.lang.System.out;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.security.Key;
+import java.security.KeyFactory;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -14,13 +16,15 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.interfaces.RSAPrivateCrtKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.RSAPrivateKeySpec;
 import java.util.Enumeration;
 
 import com.safenetinc.luna.provider.key.LunaKey;
 
 public class SavePrivateKey {
 	private Certificate certificate;
-	private PrivateKey privateKey;
+	private Key privateKey;
 	private String alias;
 
 	public static void main(String[] args) throws Exception {
@@ -37,6 +41,12 @@ public class SavePrivateKey {
 		out.println("alias:" + me.getAlias());
 		out.println("privateKey[" + me.getPrivateKey().getClass().getName() + "]:");
 		me.print(me.getPrivateKey());
+		
+		RSAPrivateCrtKey rsaKey = (RSAPrivateCrtKey) me.getPrivateKey();
+		String cModulus = rsaKey.getModulus().toString();
+		String cExponent = rsaKey.getPublicExponent().toString();
+				
+		me.setPrivateKey(createPrivateKey(rsaKey.getModulus(), rsaKey.getPublicExponent()));
 
 		// Limpia
 		HsmManager.deleteKey(me.getAlias());
@@ -85,7 +95,7 @@ public class SavePrivateKey {
 		while (e.hasMoreElements()) {
 			setAlias(e.nextElement());
 		}
-		setPrivateKey((PrivateKey) p12.getKey(getAlias(), clave.toCharArray()));
+		setPrivateKey(p12.getKey(getAlias(), clave.toCharArray()));
 		setCertificate(p12.getCertificate(getAlias()));
 	}
 
@@ -97,6 +107,18 @@ public class SavePrivateKey {
 		out.println("Exponent:" + cExponent);
 	}
 
+	private static PrivateKey createPrivateKey(String cModulus, String cPrivateExponent)
+			throws NoSuchAlgorithmException, InvalidKeySpecException {
+		return createPrivateKey(new BigInteger(cModulus), new BigInteger(cPrivateExponent));
+	}
+
+	private static PrivateKey createPrivateKey(BigInteger modulus, BigInteger privateExponent)
+			throws NoSuchAlgorithmException, InvalidKeySpecException {
+		KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+		RSAPrivateKeySpec rsaPrivateKeySpec = new RSAPrivateKeySpec(modulus, privateExponent);
+		return keyFactory.generatePrivate(rsaPrivateKeySpec);
+	}
+	
 	public Certificate getCertificate() {
 		return certificate;
 	}
@@ -105,11 +127,11 @@ public class SavePrivateKey {
 		this.certificate = certificate;
 	}
 
-	public PrivateKey getPrivateKey() {
+	public Key getPrivateKey() {
 		return privateKey;
 	}
 
-	public void setPrivateKey(PrivateKey privateKey) {
+	public void setPrivateKey(Key privateKey) {
 		this.privateKey = privateKey;
 	}
 
