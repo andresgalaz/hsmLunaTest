@@ -13,6 +13,7 @@ import java.security.PrivateKey;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.security.interfaces.RSAPrivateCrtKey;
 import java.util.Enumeration;
 
 public class SavePrivateKey {
@@ -30,11 +31,18 @@ public class SavePrivateKey {
 		HsmManager.login();
 		me.loadCertificado(args[0], args[1]);
 		out.println("alias:" + me.getAlias());
-		out.println("privateKey[" + me.getPrivateKey().getClass().getName() + "]:" + me.getPrivateKey());
-		// out.println("certificate:" + me.getCertificate());
+		out.println("privateKey[" + me.getPrivateKey().getClass().getName() + "]:");
+		me.print(me.getPrivateKey());
+
+		// Limpia
+		HsmManager.deleteKey(me.getAlias());
+		// Graba
 		HsmManager.saveRsaKey(me.getAlias(), me.getPrivateKey(), new Certificate[] { me.getCertificate() });
+		// Recupera
 		Key kHsm = HsmManager.getSavedKey(me.getAlias());
-		out.println("kHsm[" + me.getPrivateKey().getClass().getName() + "]:" + kHsm);
+		
+		out.println("kHsm[" + me.getPrivateKey().getClass().getName() + "]:");
+		me.print(kHsm);
 		HsmManager.logout();
 	}
 
@@ -53,6 +61,14 @@ public class SavePrivateKey {
 		}
 		setPrivateKey((PrivateKey) p12.getKey(getAlias(), clave.toCharArray()));
 		setCertificate(p12.getCertificate(getAlias()));
+	}
+
+	public void print(Key k) {
+		RSAPrivateCrtKey rsaKey = (RSAPrivateCrtKey) k;
+		String cModulus = rsaKey.getModulus().toString();
+		String cExponent = rsaKey.getPublicExponent().toString();
+		out.println("Modulus" + cModulus);
+		out.println("Exponent:" + cExponent);
 	}
 
 	public Certificate getCertificate() {
