@@ -16,23 +16,12 @@ import java.security.cert.CertificateException;
 import java.security.interfaces.RSAPrivateCrtKey;
 import java.util.Enumeration;
 
-import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.spec.IvParameterSpec;
-
-import com.safenetinc.luna.LunaUtils;
-
 public class SavePrivateKey {
 	private static KeyStore keyStore;
 	private Certificate certificate;
 	private Key privateKey;
 	private String alias;
 	
-    private static final IvParameterSpec FIXED_128BIT_IV_FOR_TESTS = new IvParameterSpec(
-            LunaUtils.hexStringToByteArray("DEADD00D8BADF00DDEADBABED15EA5ED")
-    );
-	
-
 	public static void main(String[] args) throws Exception {
 		if (args.length != 2) {
 			out.println("Se esperaban dos un parámetros: archivo y password");
