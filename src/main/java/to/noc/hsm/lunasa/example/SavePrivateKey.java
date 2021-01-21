@@ -69,6 +69,9 @@ public class SavePrivateKey {
 		} catch (Exception e) {
 			out.println("No se pudo obtener Exponen:" + e.getMessage());
 		}
+		
+		LunaKey.LocateKeyByAlias(me.getAlias(), 0);
+		
 		LunaKey lunaKey = kHsm;
 		out.println("lunaKey[" + me.getPrivateKey().getClass().getName() + "]:");
 		out.println(lunaKey.IsKeyPersistent());
