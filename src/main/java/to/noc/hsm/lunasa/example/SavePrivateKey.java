@@ -89,9 +89,8 @@ public class SavePrivateKey {
 
 	public void print(LunaPrivateKeyRsa k) {
 		out.println("Class:" + k.getClass().getName());
-		RSAPrivateCrtKey rsaKey = (RSAPrivateCrtKey) k;
-		out.println("Modulus:" + rsaKey.getModulus().toString());
-		out.println("Exponent:" + rsaKey.getPublicExponent().toString());
+		out.println("Modulus:" + k.getModulus().toString());
+		out.println("Exponent:" + k.getPrivateExponent().toString());
 	}
 
 	public void print(Key k) {
