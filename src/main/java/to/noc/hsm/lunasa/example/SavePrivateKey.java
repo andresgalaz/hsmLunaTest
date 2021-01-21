@@ -45,7 +45,8 @@ public class SavePrivateKey {
 		out.println(kHsm.getAlgorithm());
 		out.println(kHsm.GetAlias());
 		out.println(kHsm.getSlot());
-		out.println(kHsm.getUsageLimit());
+		// out.println(kHsm.getUsageCount());
+		// out.println(kHsm.getUsageLimit());
 		out.println(kHsm.getModulus());
 		out.println(kHsm.getPrivateExponent());
 
