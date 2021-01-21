@@ -16,6 +16,8 @@ import java.security.cert.CertificateException;
 import java.security.interfaces.RSAPrivateCrtKey;
 import java.util.Enumeration;
 
+import com.safenetinc.luna.provider.key.LunaKey;
+
 public class SavePrivateKey {
 	private Certificate certificate;
 	private PrivateKey privateKey;
@@ -30,7 +32,7 @@ public class SavePrivateKey {
 
 		HsmManager.login();
 		HsmManager.setSecretKeysExtractable(true);
-		
+
 		me.loadCertificado(args[0], args[1]);
 		out.println("alias:" + me.getAlias());
 		out.println("privateKey[" + me.getPrivateKey().getClass().getName() + "]:");
@@ -41,7 +43,8 @@ public class SavePrivateKey {
 		// Graba
 		HsmManager.saveRsaKey(me.getAlias(), me.getPrivateKey(), new Certificate[] { me.getCertificate() });
 		// Recupera
-		com.safenetinc.luna.provider.key.LunaPrivateKeyRsa kHsm = (com.safenetinc.luna.provider.key.LunaPrivateKeyRsa)HsmManager.getSavedKey(me.getAlias());
+		com.safenetinc.luna.provider.key.LunaPrivateKeyRsa kHsm = (com.safenetinc.luna.provider.key.LunaPrivateKeyRsa) HsmManager
+				.getSavedKey(me.getAlias());
 		out.println("kHsm[" + me.getPrivateKey().getClass().getName() + "]:");
 		out.println(kHsm.IsKeyPersistent());
 		out.println(kHsm.getAlgorithm());
@@ -50,7 +53,20 @@ public class SavePrivateKey {
 		// out.println(kHsm.getUsageCount());
 		// out.println(kHsm.getUsageLimit());
 		out.println(kHsm.getModulus());
-		out.println(kHsm.getPrivateExponent());
+		try {
+			out.println(kHsm.getPrivateExponent());
+		} catch (Exception e) {
+			out.println("No se pudo obtener Exponen:" + e.getMessage());
+		}
+		LunaKey lunaKey = kHsm;
+		out.println("lunaKey[" + me.getPrivateKey().getClass().getName() + "]:");
+		out.println(lunaKey.IsKeyPersistent());
+		out.println(lunaKey.getAlgorithm());
+		out.println(lunaKey.GetAlias());
+		out.println(lunaKey.getSlot());
+		// out.println(lunaKey.getUsageCount());
+		// out.println(lunaKey.getUsageLimit());
+		out.println(lunaKey);
 
 		// me.print(kHsm);
 		HsmManager.logout();
