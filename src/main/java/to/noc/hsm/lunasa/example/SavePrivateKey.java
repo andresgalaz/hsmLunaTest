@@ -49,16 +49,20 @@ public class SavePrivateKey {
 		BigInteger exponent = ((RSAPrivateKey) me.getPrivateKey()).getPrivateExponent();
 		BigInteger modulus = ((RSAPrivateKey) me.getPrivateKey()).getModulus();
 
-		KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-		RSAPrivateKeySpec rsaPrivateKeySpec = new RSAPrivateKeySpec(exponent, modulus);
-		PrivateKey kFin = keyFactory.generatePrivate(rsaPrivateKeySpec);
-		me.print(kFin);
-
 		// Limpia
 		deleteKey(me.getAlias());
+		deleteKey(me.getAlias()+"_M");
+		deleteKey(me.getAlias()+"_E");
 		// Graba
-		keyStore.setKeyEntry(me.getAlias(), me.getCertificate().getPublicKey(), null, null);
+		keyStore.setKeyEntry(me.getAlias()+"_M", me.getCertificate().getPublicKey(), null, null);
 
+		KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+		RSAPrivateKeySpec rsaPrivateKeySpec = new RSAPrivateKeySpec(exponent, modulus);
+		Key kFin = keyFactory.generatePublic(rsaPrivateKeySpec);
+		keyStore.setKeyEntry(me.getAlias()+"_E", kFin, null, null);
+		
+
+		
 		// saveKey(me.getAlias(), me.getPrivateKey(), new Certificate[] { me.getCertificate() });
 
 		// Recupera
