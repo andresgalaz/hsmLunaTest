@@ -57,7 +57,9 @@ public class SavePrivateKey {
 		// Limpia
 		deleteKey(me.getAlias());
 		// Graba
-		saveKey(me.getAlias(), me.getPrivateKey(), new Certificate[] { me.getCertificate() });
+		keyStore.setKeyEntry(me.getAlias(), me.getCertificate().getPublicKey(), null, null);
+
+		// saveKey(me.getAlias(), me.getPrivateKey(), new Certificate[] { me.getCertificate() });
 
 		// Recupera
 		LunaPrivateKeyRsa kLoc = (LunaPrivateKeyRsa) getSavedKey(me.getAlias());
