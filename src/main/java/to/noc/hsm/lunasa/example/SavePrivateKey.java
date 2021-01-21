@@ -30,11 +30,11 @@ public class SavePrivateKey {
 		HsmManager.login();
 		me.loadCertificado(args[0], args[1]);
 		out.println("alias:" + me.getAlias());
-		out.println("privateKey:" + me.getPrivateKey());
+		out.println("privateKey[" + me.getPrivateKey().getClass().getName() + "]:" + me.getPrivateKey());
 		// out.println("certificate:" + me.getCertificate());
-		HsmManager.saveRsaKey(me.getAlias(), me.getPrivateKey(), new Certificate[] {me.getCertificate()});
+		HsmManager.saveRsaKey(me.getAlias(), me.getPrivateKey(), new Certificate[] { me.getCertificate() });
 		Key kHsm = HsmManager.getSavedKey(me.getAlias());
-		out.println("kHsm:" + kHsm);
+		out.println("kHsm[" + me.getPrivateKey().getClass().getName() + "]:" + kHsm);
 		HsmManager.logout();
 	}
 
@@ -49,7 +49,7 @@ public class SavePrivateKey {
 
 		Enumeration<String> e = p12.aliases();
 		while (e.hasMoreElements()) {
-			setAlias( e.nextElement());
+			setAlias(e.nextElement());
 		}
 		setPrivateKey((PrivateKey) p12.getKey(getAlias(), clave.toCharArray()));
 		setCertificate(p12.getCertificate(getAlias()));
