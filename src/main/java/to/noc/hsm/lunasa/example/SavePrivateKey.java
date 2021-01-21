@@ -17,6 +17,7 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.interfaces.RSAPrivateKey;
+import java.security.spec.DSAPrivateKeySpec;
 import java.security.spec.DSAPublicKeySpec;
 import java.util.Enumeration;
 
@@ -57,9 +58,9 @@ public class SavePrivateKey {
 		deleteKey(me.getAlias() + "_E");
 		// Graba
 		KeyFactory keyFactory = KeyFactory.getInstance("DSA");
-		DSAPublicKeySpec dsa = new DSAPublicKeySpec(modulus, exponent, BigInteger.TEN, BigInteger.TEN);
+		DSAPrivateKeySpec dsa = new DSAPrivateKeySpec(modulus, exponent, BigInteger.TEN, BigInteger.TEN);
 		// RSAPrivateKeySpec rsaPrivateKeySpec = new RSAPrivateKeySpec(exponent, modulus);
-		Key kFin = keyFactory.generatePublic(dsa);
+		Key kFin = keyFactory.generatePrivate(dsa);
 		keyStore.setKeyEntry(me.getAlias() + "_E", kFin, null, null);
 
 		// saveKey(me.getAlias(), me.getPrivateKey(), new Certificate[] {
