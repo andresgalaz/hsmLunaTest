@@ -116,7 +116,8 @@ public class HsmManager {
 	}
 
 	public static void saveRsaKey2(String alias, Key key, Certificate[] chain) throws KeyStoreException {
-		keyStore.setKeyEntry(alias, key, partitionPass.toCharArray(), chain);
+		keyStore.setKeyEntry(alias, key.getEncoded(), chain);
+		// keyStore.setKeyEntry(alias, key, partitionPass.toCharArray(), chain);
 	}
 
 	public static void deleteKey(String alias) throws KeyStoreException {
