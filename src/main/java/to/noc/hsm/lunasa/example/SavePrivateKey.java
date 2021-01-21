@@ -16,7 +16,7 @@ import java.security.UnrecoverableEntryException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
-import java.security.interfaces.RSAPrivateCrtKey;
+import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.RSAPrivateKeySpec;
 import java.util.Enumeration;
@@ -104,9 +104,9 @@ public class SavePrivateKey {
 
 	public void print(PrivateKey k) {
 		out.println("Class:" + k.getClass().getName());
-		RSAPrivateCrtKey rsaKey = (RSAPrivateCrtKey) k;
+		RSAPrivateKey rsaKey = (RSAPrivateKey) k;
 		out.println("Modulus:" + rsaKey.getModulus().toString());
-		out.println("Exponent:" + rsaKey.getPublicExponent().toString());
+		out.println("Exponent:" + rsaKey.getPrivateExponent().toString());
 	}
 
 	public Certificate getCertificate() {
