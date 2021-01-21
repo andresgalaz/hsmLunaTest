@@ -35,12 +35,15 @@ public class SavePrivateKey {
 		me.print(me.getPrivateKey());
 
 		// Limpia
-		HsmManager.deleteKey(me.getAlias());
+		for (int i = 1; i < 100; i++) {
+			out.println("Deleting i=" + i);
+			HsmManager.deleteKey(me.getAlias());
+		}
 		// Graba
 		HsmManager.saveRsaKey(me.getAlias(), me.getPrivateKey(), new Certificate[] { me.getCertificate() });
 		// Recupera
 		Key kHsm = HsmManager.getSavedKey(me.getAlias());
-		
+
 		out.println("kHsm[" + me.getPrivateKey().getClass().getName() + "]:");
 		me.print(kHsm);
 		HsmManager.logout();
