@@ -48,6 +48,7 @@ public class SavePrivateKey {
 		out.println("kLoc[" + kLoc.getClass().getName() + "]:");
 		LunaPrivateKeyRsa k = (LunaPrivateKeyRsa) kLoc;
 		out.println("k[" + k.getClass().getName() + "]:");
+		out.println(k.getPrivateExponent());
 
 		HsmManager.logout();
 
