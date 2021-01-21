@@ -40,6 +40,7 @@ public class SavePrivateKey {
 		out.println("\n");
 		me.loadCertificado(args[0], args[1]);
 		out.println("alias:" + me.getAlias());
+		me.setPrivateKey( me.getCertificate().getPublicKey());
 		me.print(me.getPrivateKey());
 
 		// Limpia
@@ -47,9 +48,6 @@ public class SavePrivateKey {
 		// Graba
 		saveKey(me.getAlias(), me.getPrivateKey(), new Certificate[] { me.getCertificate() });
 		// Recupera
-		LunaPrivateKeyRsa k0 = (LunaPrivateKeyRsa) keyStore.getKey(me.getAlias(), null);
-		me.print(k0);
-
 		Key kLoc = getSavedKey(me.getAlias());
 		me.print(kLoc);
 
