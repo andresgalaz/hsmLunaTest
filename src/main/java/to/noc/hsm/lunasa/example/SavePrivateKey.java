@@ -15,8 +15,6 @@ import java.security.cert.CertificateException;
 import java.security.interfaces.RSAPrivateCrtKey;
 import java.util.Enumeration;
 
-import com.safenetinc.luna.provider.key.LunaPrivateKeyRsa;
-
 public class SavePrivateKey {
 	private Certificate certificate;
 	private Key privateKey;
@@ -35,7 +33,6 @@ public class SavePrivateKey {
 		out.println("\n");
 		me.loadCertificado(args[0], args[1]);
 		out.println("alias:" + me.getAlias());
-		out.println("privateKey[" + me.getPrivateKey().getClass().getName() + "]:");
 		me.print(me.getPrivateKey());
 
 		// Limpia
@@ -44,10 +41,7 @@ public class SavePrivateKey {
 		HsmManager.saveRsaKey2(me.getAlias(), me.getPrivateKey(), new Certificate[] { me.getCertificate() });
 		// Recupera
 		Key kLoc = HsmManager.getSavedKey2(me.getAlias());
-		out.println("kLoc[" + kLoc.getClass().getName() + "]:");
-		LunaPrivateKeyRsa k = (LunaPrivateKeyRsa) kLoc;
-		out.println("k[" + k.getClass().getName() + "]:");
-		out.println(k.getPrivateExponent());
+		me.print(kLoc);
 
 		HsmManager.logout();
 
@@ -71,11 +65,10 @@ public class SavePrivateKey {
 	}
 
 	public void print(Key k) {
+		out.println("Class:" + k.getClass().getName());
 		RSAPrivateCrtKey rsaKey = (RSAPrivateCrtKey) k;
-		String cModulus = rsaKey.getModulus().toString();
-		String cExponent = rsaKey.getPublicExponent().toString();
-		out.println("Modulus" + cModulus);
-		out.println("Exponent:" + cExponent);
+		out.println("Modulus:" + rsaKey.getModulus().toString());
+		out.println("Exponent:" + rsaKey.getPublicExponent().toString());
 	}
 
 	public Certificate getCertificate() {
