@@ -15,7 +15,6 @@ import java.security.cert.CertificateException;
 import java.security.interfaces.RSAPrivateCrtKey;
 import java.util.Enumeration;
 
-import com.safenetinc.luna.provider.key.LunaKey;
 import com.safenetinc.luna.provider.key.LunaPrivateKeyRsa;
 
 public class SavePrivateKey {
@@ -42,9 +41,9 @@ public class SavePrivateKey {
 		// Limpia
 		HsmManager.deleteKey(me.getAlias());
 		// Graba
-		HsmManager.saveRsaKey(me.getAlias(), me.getPrivateKey(), new Certificate[] { me.getCertificate() });
+		HsmManager.saveRsaKey2(me.getAlias(), me.getPrivateKey(), new Certificate[] { me.getCertificate() });
 		// Recupera
-		Key kLoc = LunaKey.LocateKeyByAlias(me.getAlias(), 0);
+		Key kLoc = HsmManager.getSavedKey2(me.getAlias());
 		out.println("kLoc[" + kLoc.getClass().getName() + "]:");
 		LunaPrivateKeyRsa k = (LunaPrivateKeyRsa) kLoc;
 		out.println("k[" + k.getClass().getName() + "]:");
