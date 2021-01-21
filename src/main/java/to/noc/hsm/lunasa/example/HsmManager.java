@@ -121,8 +121,8 @@ public class HsmManager {
 	public static void main(String[] args) throws Exception {
 		// Testing
 		System.out.println("Testing OK:");
-		System.out.println("\t" + partitionName);
-		System.out.println("\t" + partitionPass);
+		// System.out.println("\t" + partitionName);
+		// System.out.println("\t" + partitionPass);
 	}
 
 	private static void paramsDesdeConsola() {
