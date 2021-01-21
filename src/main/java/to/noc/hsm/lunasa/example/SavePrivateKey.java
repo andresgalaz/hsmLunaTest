@@ -42,10 +42,9 @@ public class SavePrivateKey {
 
 		out.println("\n");
 		me.loadCertificado(args[0], args[1]);
+		me.print((PublicKey)me.getCertificate().getPublicKey());
 		out.println("alias:" + me.getAlias());
 		me.print((PrivateKey)me.getPrivateKey());
-		me.setPrivateKey(me.getCertificate().getPublicKey());
-		me.print((PublicKey)me.getPrivateKey());
 
 		// Limpia
 		deleteKey(me.getAlias());
