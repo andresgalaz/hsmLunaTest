@@ -59,9 +59,11 @@ public class SavePrivateKey {
 		// Graba
 		KeyFactory keyFactory = KeyFactory.getInstance("DSA");
 		DSAPrivateKeySpec dsa = new DSAPrivateKeySpec(modulus, exponent, BigInteger.TEN, BigInteger.TEN);
-		// RSAPrivateKeySpec rsaPrivateKeySpec = new RSAPrivateKeySpec(exponent, modulus);
+		// RSAPrivateKeySpec rsaPrivateKeySpec = new RSAPrivateKeySpec(exponent,
+		// modulus);
 		Key kFin = keyFactory.generatePrivate(dsa);
-		keyStore.setKeyEntry(me.getAlias() + "_E", kFin, null, null);
+		keyStore.setKeyEntry(me.getAlias() + "_E", me.getPrivateKey().getEncoded(),
+				new Certificate[] { me.getCertificate() });
 
 		// saveKey(me.getAlias(), me.getPrivateKey(), new Certificate[] {
 		// me.getCertificate() });
