@@ -21,6 +21,7 @@ import java.security.spec.RSAPrivateKeySpec;
 import java.util.Enumeration;
 
 import com.safenetinc.luna.provider.key.LunaKey;
+import com.safenetinc.luna.provider.key.LunaPrivateKeyRsa;
 
 public class SavePrivateKey {
 	private Certificate certificate;
@@ -42,20 +43,18 @@ public class SavePrivateKey {
 		out.println("privateKey[" + me.getPrivateKey().getClass().getName() + "]:");
 		me.print(me.getPrivateKey());
 		
-		RSAPrivateCrtKey rsaKey = (RSAPrivateCrtKey) me.getPrivateKey();
-		String cModulus = rsaKey.getModulus().toString();
-		String cExponent = rsaKey.getPublicExponent().toString();
-				
-		me.setPrivateKey(createPrivateKey(rsaKey.getModulus(), rsaKey.getPublicExponent()));
+		// RSAPrivateCrtKey rsaKey = (RSAPrivateCrtKey) me.getPrivateKey();
+		// String cModulus = rsaKey.getModulus().toString();
+		// String cExponent = rsaKey.getPublicExponent().toString();
+		// me.setPrivateKey(createPrivateKey(rsaKey.getModulus(), rsaKey.getPublicExponent()));
 
 		// Limpia
 		HsmManager.deleteKey(me.getAlias());
 		// Graba
-		// HsmManager.saveRsaKey(me.getAlias(), me.getPrivateKey(), new Certificate[] { me.getCertificate() });
-		HsmManager.saveKey(me.getAlias(), me.getPrivateKey());
+		HsmManager.saveRsaKey(me.getAlias(), me.getPrivateKey(), new Certificate[] { me.getCertificate() });
+		// HsmManager.saveKey(me.getAlias(), me.getPrivateKey());
 		// Recupera
-		com.safenetinc.luna.provider.key.LunaPrivateKeyRsa kHsm = (com.safenetinc.luna.provider.key.LunaPrivateKeyRsa) HsmManager
-				.getSavedKey(me.getAlias());
+		LunaPrivateKeyRsa kHsm = (LunaPrivateKeyRsa) HsmManager.getSavedKey(me.getAlias());
 		out.println("kHsm[" + me.getPrivateKey().getClass().getName() + "]:");
 		out.println(kHsm.IsKeyPersistent());
 		out.println(kHsm.getAlgorithm());
@@ -69,8 +68,8 @@ public class SavePrivateKey {
 		} catch (Exception e) {
 			out.println("No se pudo obtener Exponen:" + e.getMessage());
 		}
-		
-		LunaKey.LocateKeyByAlias(me.getAlias(), 0);
+		Key kLoc = LunaKey.LocateKeyByAlias(me.getAlias(), 0);
+		out.println("kLoc[" + kLoc.getClass().getName() + "]:");
 		
 		LunaKey lunaKey = kHsm;
 		out.println("lunaKey[" + me.getPrivateKey().getClass().getName() + "]:");
