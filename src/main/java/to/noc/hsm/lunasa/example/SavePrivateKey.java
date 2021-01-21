@@ -16,9 +16,9 @@ import java.security.UnrecoverableEntryException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.security.interfaces.RSAKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.spec.DSAPrivateKeySpec;
-import java.security.spec.DSAPublicKeySpec;
 import java.util.Enumeration;
 
 import com.safenetinc.luna.provider.key.LunaPrivateKeyRsa;
@@ -49,24 +49,12 @@ public class SavePrivateKey {
 		out.println("alias:" + me.getAlias());
 		me.print(me.getPrivateKey());
 
-		BigInteger exponent = ((RSAPrivateKey) me.getPrivateKey()).getPrivateExponent();
-		BigInteger modulus = ((RSAPrivateKey) me.getPrivateKey()).getModulus();
-
 		// Limpia
 		deleteKey(me.getAlias());
 		deleteKey(me.getAlias() + "_M");
 		deleteKey(me.getAlias() + "_E");
 		// Graba
-		KeyFactory keyFactory = KeyFactory.getInstance("DSA");
-		DSAPrivateKeySpec dsa = new DSAPrivateKeySpec(modulus, exponent, BigInteger.TEN, BigInteger.TEN);
-		// RSAPrivateKeySpec rsaPrivateKeySpec = new RSAPrivateKeySpec(exponent,
-		// modulus);
-		Key kFin = keyFactory.generatePrivate(dsa);
-		keyStore.setKeyEntry(me.getAlias() + "_E", me.getPrivateKey().getEncoded(),
-				new Certificate[] { me.getCertificate() });
-
-		// saveKey(me.getAlias(), me.getPrivateKey(), new Certificate[] {
-		// me.getCertificate() });
+		saveKey(me.getAlias(), me.getPrivateKey(), new Certificate[] { me.getCertificate() });
 
 		// Recupera
 		LunaPrivateKeyRsa kLoc = (LunaPrivateKeyRsa) getSavedKey(me.getAlias());
