@@ -39,6 +39,7 @@ public class SavePrivateKey {
 			out.println("\t-v <alias>       # verifica si existe la KEK");
 			return;
 		}
+		out.println("\n==========================================================");
 		if ("-c".equalsIgnoreCase(args[0])) {
 			// Crea una KEK
 			creaKek(args[1]);
@@ -86,7 +87,7 @@ public class SavePrivateKey {
 
 	private static void creaKek(String alias) throws Exception {
 		HsmManager.login();
-		HsmManager.setSecretKeysExtractable(true);
+		// HsmManager.setSecretKeysExtractable(true);
 		if (HsmManager.hasSavedKey(alias)) {
 			out.println("Borrando alias existente:" + alias);
 			HsmManager.deleteKey(alias);
