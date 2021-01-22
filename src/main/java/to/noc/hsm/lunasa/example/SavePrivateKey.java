@@ -20,6 +20,8 @@ import java.util.Enumeration;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
+import com.safenetinc.luna.LunaAPI;
+import com.safenetinc.luna.LunaTokenObject;
 import com.safenetinc.luna.provider.key.LunaPrivateKeyRsa;
 import com.safenetinc.luna.provider.key.LunaSecretKey;
 
@@ -93,6 +95,11 @@ public class SavePrivateKey {
 		kg.init(256);
 
 		LunaSecretKey kek = (LunaSecretKey) kg.generateKey();
+		
+        LunaTokenObject obj = LunaTokenObject.LocateObjectByHandle(kek.GetKeyHandle());
+        obj.SetBooleanAttribute(LunaAPI.CKA_ENCRYPT, false);
+        obj.SetBooleanAttribute(LunaAPI.CKA_DECRYPT, false);
+		
 		HsmManager.saveKey(alias, kek);
 		out.println("Se crea y lamacena KEK en forma existosa con el alias:" + alias);
 		out.println(kek);
