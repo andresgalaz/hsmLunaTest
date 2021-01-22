@@ -1,5 +1,7 @@
 package to.noc.hsm.lunasa.example;
 
+import static java.lang.System.out;
+
 import java.io.BufferedReader;
 import java.io.Console;
 import java.io.File;
@@ -137,6 +139,8 @@ public class HsmManager {
 			bHayCambios |= (partitionPass != cLn);
 			partitionPass = cLn;
 		}
+		out.println();
+
 		if (bHayCambios) {
 			Properties prop = new Properties();
 
@@ -239,7 +243,8 @@ public class HsmManager {
 		return Base64.encode(certByte);
 	}
 
-	public static KeyStore loadKey(FileInputStream is) throws NoSuchAlgorithmException, CertificateException, IOException {
+	public static KeyStore loadKey(FileInputStream is)
+			throws NoSuchAlgorithmException, CertificateException, IOException {
 		keyStore.load(is, partitionPass.toCharArray());
 		return keyStore;
 	}
@@ -247,5 +252,5 @@ public class HsmManager {
 	public static String getPartitionPass() {
 		return partitionPass;
 	}
-	
+
 }

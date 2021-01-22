@@ -87,8 +87,7 @@ public class SavePrivateKey {
 
 	private static void creaKek(String alias) throws Exception {
 		HsmManager.login();
-		out.println();
-		// HsmManager.setSecretKeysExtractable(true);
+		HsmManager.setSecretKeysExtractable(true);
 		if (HsmManager.hasSavedKey(alias)) {
 			out.println("Borrando alias existente:" + alias);
 			HsmManager.deleteKey(alias);
@@ -97,11 +96,11 @@ public class SavePrivateKey {
 		kg.init(256);
 
 		LunaSecretKey kek = (LunaSecretKey) kg.generateKey();
-		
-        LunaTokenObject obj = LunaTokenObject.LocateObjectByHandle(kek.GetKeyHandle());
-        obj.SetBooleanAttribute(LunaAPI.CKA_ENCRYPT, false);
-        obj.SetBooleanAttribute(LunaAPI.CKA_DECRYPT, false);
-		
+
+		LunaTokenObject obj = LunaTokenObject.LocateObjectByHandle(kek.GetKeyHandle());
+		obj.SetBooleanAttribute(LunaAPI.CKA_ENCRYPT, false);
+		obj.SetBooleanAttribute(LunaAPI.CKA_DECRYPT, false);
+
 		HsmManager.saveKey(alias, kek);
 		out.println("Se crea y lamacena KEK en forma existosa con el alias:" + alias);
 		out.println(kek);
@@ -111,7 +110,7 @@ public class SavePrivateKey {
 	private static void verificaKek(String alias) throws Exception {
 		HsmManager.login();
 		HsmManager.setSecretKeysExtractable(true);
-		if (HsmManager.hasSavedKey(alias)) {
+		if (!HsmManager.hasSavedKey(alias)) {
 			out.println("KEK no existe con:" + alias);
 			return;
 		}
