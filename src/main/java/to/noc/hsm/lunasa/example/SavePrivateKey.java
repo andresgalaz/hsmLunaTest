@@ -5,9 +5,7 @@ import static java.lang.System.out;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.math.BigInteger;
 import java.security.Key;
-import java.security.KeyFactory;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -16,12 +14,14 @@ import java.security.UnrecoverableEntryException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
-import java.security.interfaces.RSAKey;
 import java.security.interfaces.RSAPrivateKey;
-import java.security.spec.DSAPrivateKeySpec;
 import java.util.Enumeration;
 
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+
 import com.safenetinc.luna.provider.key.LunaPrivateKeyRsa;
+import com.safenetinc.luna.provider.key.LunaSecretKey;
 
 public class SavePrivateKey {
 	private static KeyStore keyStore;
@@ -31,7 +31,23 @@ public class SavePrivateKey {
 	private String alias;
 
 	public static void main(String[] args) throws Exception {
-		if (args.length != 2) {
+		if (args.length == 0) {
+			out.println("Faltan argumentos. Modo de uso:");
+			out.println("\t-c <alias>       # crea la KEK con el <alias>");
+			out.println("\t-v <alias>       # verifica si existe la KEK");
+			return;
+		}
+		if ("-c".equalsIgnoreCase(args[0])) {
+			// Crea una KEK
+			creaKek(args[1]);
+			return;
+		}
+		if ("-v".equalsIgnoreCase(args[0])) {
+			// Crea una KEK
+			verificaKek(args[1]);
+			return;
+		}
+		if (true) {
 			out.println("Se esperaban dos un parámetros: archivo y password");
 			return;
 		}
@@ -64,6 +80,34 @@ public class SavePrivateKey {
 		out.println(cer);
 
 		HsmManager.logout();
+	}
+
+	private static void creaKek(String alias) throws Exception {
+		HsmManager.login();
+		HsmManager.setSecretKeysExtractable(true);
+		if (HsmManager.hasSavedKey(alias)) {
+			out.println("Borrando alias existente:" + alias);
+			HsmManager.deleteKey(alias);
+		}
+		KeyGenerator kg = KeyGenerator.getInstance("AES", "LunaProvider");
+		kg.init(256);
+
+		LunaSecretKey kek = (LunaSecretKey) kg.generateKey();
+		HsmManager.saveKey(alias, kek);
+		out.println("Se crea y lamacena KEK en forma existosa con el alias:" + alias);
+		out.println(kek);
+
+	}
+
+	private static void verificaKek(String alias) throws Exception {
+		HsmManager.login();
+		HsmManager.setSecretKeysExtractable(true);
+		if (HsmManager.hasSavedKey(alias)) {
+			out.println("KEK no existe con:" + alias);
+			return;
+		}
+		SecretKey kek = (SecretKey) HsmManager.getSavedKey(alias);
+		out.println(kek);
 	}
 
 	public void loadCertificado(String filename, String clave) throws KeyStoreException, NoSuchAlgorithmException,
