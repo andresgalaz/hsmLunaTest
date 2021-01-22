@@ -96,7 +96,7 @@ public class SavePrivateKey {
 		HsmManager.saveKey(alias, kek);
 		out.println("Se crea y lamacena KEK en forma existosa con el alias:" + alias);
 		out.println(kek);
-
+		HsmManager.logout();
 	}
 
 	private static void verificaKek(String alias) throws Exception {
@@ -108,6 +108,7 @@ public class SavePrivateKey {
 		}
 		SecretKey kek = (SecretKey) HsmManager.getSavedKey(alias);
 		out.println(kek);
+		HsmManager.logout();
 	}
 
 	public void loadCertificado(String filename, String clave) throws KeyStoreException, NoSuchAlgorithmException,
