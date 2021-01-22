@@ -87,6 +87,7 @@ public class SavePrivateKey {
 
 	private static void creaKek(String alias) throws Exception {
 		HsmManager.login();
+		out.println();
 		// HsmManager.setSecretKeysExtractable(true);
 		if (HsmManager.hasSavedKey(alias)) {
 			out.println("Borrando alias existente:" + alias);
