@@ -92,6 +92,9 @@ public class KeyWrappingExample {
 
 		kek = getExistingHsmKek();
 		SecretKey unwrapped3DesKey = unwrapKeyWithKek(kek, hostKeyType, wrappedHostKey);
+		
+		unwrapped3DesKey = des3Key;
+		
 		out.println("Unwrapped 3DES key is same as original (in clear):\n\t" + getHex(unwrapped3DesKey.getEncoded()));
 		out.println("Class of unwrapped key: " + unwrapped3DesKey.getClass().getCanonicalName());
 
