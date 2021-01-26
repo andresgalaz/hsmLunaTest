@@ -86,7 +86,7 @@ public class KeyWrappingExample {
 		out.println("\nStopping and starting session with HSM.");
 		HsmManager.logout();
 		out.println("Pretend that the host key was stored and restored from a database while disconnected\n");
-		kek = null;
+// kek = null;
 // des3Key = null;
 		HsmManager.login();
 
@@ -109,15 +109,15 @@ public class KeyWrappingExample {
 
 		// Start software cipher operation
 		Cipher sunJceCipher = Cipher.getInstance("DESede/ECB/NoPadding", "SunJCE");
-		sunJceCipher.init(Cipher.ENCRYPT_MODE, unwrapped3DesKey);
-		// sunJceCipher.init(Cipher.ENCRYPT_MODE, kek);
+		// sunJceCipher.init(Cipher.ENCRYPT_MODE, unwrapped3DesKey);
+		sunJceCipher.init(Cipher.ENCRYPT_MODE, kek);
 		byte[] cipherText = sunJceCipher.doFinal(plainText.getBytes());
 		out.println("SunJCE encryption result:\n\t" + getHex(cipherText));
 
 		// Start Luna HSM cipher operation
 		Cipher lunaHsmCipher = Cipher.getInstance("DESede/ECB/NoPadding", "LunaProvider");
-		lunaHsmCipher.init(Cipher.DECRYPT_MODE, unwrapped3DesKey);
-		// lunaHsmCipher.init(Cipher.DECRYPT_MODE, kek);
+		// lunaHsmCipher.init(Cipher.DECRYPT_MODE, unwrapped3DesKey);
+		lunaHsmCipher.init(Cipher.DECRYPT_MODE, kek);
 		byte[] originalClearText = lunaHsmCipher.doFinal(cipherText);
 		out.println("LunaProvider HSM decrypt result:\n\t" + new String(originalClearText));
 
