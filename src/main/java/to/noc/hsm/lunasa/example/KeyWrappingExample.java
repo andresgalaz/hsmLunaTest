@@ -87,7 +87,7 @@ public class KeyWrappingExample {
 		HsmManager.logout();
 		out.println("Pretend that the host key was stored and restored from a database while disconnected\n");
 		kek = null;
-		des3Key = null;
+// des3Key = null;
 		HsmManager.login();
 
 		kek = getExistingHsmKek();
