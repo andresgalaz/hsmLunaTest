@@ -48,7 +48,7 @@ public class LoadPrivateKey {
 		algParams.init(new IvParameterSpec(new byte[16]));
 		cipher.init(Cipher.UNWRAP_MODE, wmk, algParams);
 		
-		Key unwrappedExtractableKey = cipher.unwrap(bin, "RSA", Cipher.SECRET_KEY);
+		Key unwrappedExtractableKey = cipher.unwrap(bin, "AES", Cipher.SECRET_KEY);
 		out.println(getHex(unwrappedExtractableKey.getEncoded()));
 
 		Key unwrappedExtractableKey2 = cipher.unwrap(material, "RSA", Cipher.SECRET_KEY);
