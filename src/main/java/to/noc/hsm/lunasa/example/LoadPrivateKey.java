@@ -34,8 +34,11 @@ public class LoadPrivateKey {
 		HsmManager.login();
 		HsmManager.setSecretKeysExtractable(true);
 		SecretKey wmk = (SecretKey) HsmManager.getSavedKey(KEK_ALIAS);
+		out.println("\nŧMaster KEY");
 		out.println(wmk);
+		out.println("\n\tBIN");
 		out.println(getHex(bin));
+		out.println("\n\tMATERIAL");
 		out.println(getHex(material));
 
 		// Cipher cipher = Cipher.getInstance("AES", "LunaProvider");
