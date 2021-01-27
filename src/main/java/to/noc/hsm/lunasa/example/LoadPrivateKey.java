@@ -22,8 +22,7 @@ import com.safenetinc.luna.LunaUtils;
 public class LoadPrivateKey {
 	private static final String KEK_ALIAS = "MSP_WK";
 
-	private static final byte[] FIXED_128BIT_IV_FOR_TESTS = LunaUtils
-			.hexStringToByteArray("DEADD00D8BADF00DDEADBABED15EA5ED");
+	private static final byte[] FIXED_128BIT_IV_FOR_TESTS = LunaUtils.hexStringToByteArray("DEADD00D8BADF00DDEADBABED15EA5ED");
 	
 	public static void main(String[] args) throws Exception {
 		HsmManager.login();
