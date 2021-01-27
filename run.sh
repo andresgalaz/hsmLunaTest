@@ -1,5 +1,20 @@
 #!/bin/bash
-# java -cp lib/*:build/classes/main to.noc.hsm.lunasa.example.KeyWrappingExample
-# java -cp lib/*:build/classes/main to.noc.hsm.lunasa.example.WrappedKeySerializationExample
-# java -cp lib/*:build/classes/main to.noc.hsm.lunasa.example.KeyWrappingWithHsmGeneratedKeysExample
+if git pull | grep -q '^Ya est' ; then
+	echo "No hay cambios"
+else
+	echo "Actualizando ... "
+	./gradlew compileJava
+fi
+#java -cp lib/*:build/classes/main to.noc.hsm.lunasa.example.KeyWrappingExample
+#java -cp lib/*:build/classes/main to.noc.hsm.lunasa.example.WrappedKeySerializationExample
+#java -cp lib/*:build/classes/main to.noc.hsm.lunasa.example.KeyWrappingWithHsmGeneratedKeysExample
 java -cp lib/*:build/classes/main to.noc.hsm.lunasa.example.LoadPrivateKey
+# << LN_2_EMPTY
+#
+#
+#LN_2_EMPTY
+# /home/firmador/keys/testHSM.p12 Asdfgh954321
+# java -cp lib/*:build/classes/main to.noc.hsm.lunasa.example.SavePrivateKey $* << LN_2_EMPTY
+# 
+# 
+# LN_2_EMPTY
