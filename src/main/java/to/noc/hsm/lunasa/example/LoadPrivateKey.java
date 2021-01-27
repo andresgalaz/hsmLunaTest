@@ -28,8 +28,8 @@ public class LoadPrivateKey {
 	public static void main(String[] args) throws Exception {
 		HsmManager.login();
 
-		byte[] bin = loadFromFile("/home/firmador/keys/bin.b64");
-		byte[] material = loadFromFile("/home/firmador/keys/material.b64");
+		byte[] bin = loadFromFile("/home/firmador/keys/wrappedKeyBin.b64");
+		byte[] material = loadFromFile("/home/firmador/keys/wrappedKeyMaterial.b64");
 
 		HsmManager.login();
 		HsmManager.setSecretKeysExtractable(true);
@@ -40,7 +40,8 @@ public class LoadPrivateKey {
 		out.println(getHex(bin));
 		out.println("\n\tMATERIAL");
 		out.println(getHex(material));
-
+		out.println();
+		
 		// Cipher cipher = Cipher.getInstance("AES", "LunaProvider");
 		Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding", "LunaProvider");
 		AlgorithmParameters algParams = AlgorithmParameters.getInstance("IV", "LunaProvider");
