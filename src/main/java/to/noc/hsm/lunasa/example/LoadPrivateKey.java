@@ -42,7 +42,7 @@ public class LoadPrivateKey {
 		algParams.init(new IvParameterSpec(FIXED_128BIT_IV_FOR_TESTS));
 		// cipher.init(Cipher.WRAP_MODE, wmk);
 		cipher.init(Cipher.UNWRAP_MODE, wmk,algParams);
-		Key unwrappedExtractableKey = cipher.unwrap(bin.getBytes(), "AES", Cipher.SECRET_KEY);
+		Key unwrappedExtractableKey = cipher.unwrap(bin.getBytes(), "RSA", Cipher.SECRET_KEY);
 		out.println(getHex(unwrappedExtractableKey.getEncoded()));
 
 		Key unwrappedExtractableKey2 = cipher.unwrap(material.getBytes(), "AES", Cipher.SECRET_KEY);
