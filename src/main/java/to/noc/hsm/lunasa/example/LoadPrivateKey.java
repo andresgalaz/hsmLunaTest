@@ -30,7 +30,7 @@ public class LoadPrivateKey {
 		HsmManager.setSecretKeysExtractable(true);
 		SecretKey wmk = (SecretKey) HsmManager.getSavedKey(KEK_ALIAS);
 
-		Cipher cipher = Cipher.getInstance("RSAAESWrap", "LunaProvider");
+		Cipher cipher = Cipher.getInstance("AESWrap", "LunaProvider");
 		cipher.init(Cipher.WRAP_MODE, wmk);
 		cipher.init(Cipher.UNWRAP_MODE, wmk);
 		Key unwrappedExtractableKey = cipher.unwrap(bin.getBytes(), "AES", Cipher.SECRET_KEY);
