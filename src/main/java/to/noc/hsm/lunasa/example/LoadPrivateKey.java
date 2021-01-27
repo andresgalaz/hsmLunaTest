@@ -5,6 +5,7 @@ import static java.lang.System.out;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.security.AlgorithmParameters;
 import java.security.Key;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -12,6 +13,7 @@ import java.security.cert.CertificateException;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
 
 import org.apache.axis.encoding.Base64;
 
@@ -20,6 +22,9 @@ import com.safenetinc.luna.LunaUtils;
 public class LoadPrivateKey {
 	private static final String KEK_ALIAS = "MSP_WK";
 
+	private static final byte[] FIXED_128BIT_IV_FOR_TESTS = LunaUtils
+			.hexStringToByteArray("DEADD00D8BADF00DDEADBABED15EA5ED");
+	
 	public static void main(String[] args) throws Exception {
 		HsmManager.login();
 
@@ -33,8 +38,10 @@ public class LoadPrivateKey {
 
 		// Cipher cipher = Cipher.getInstance("AES", "LunaProvider");
 		Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding", "LunaProvider");
+		AlgorithmParameters algParams = AlgorithmParameters.getInstance("IV", "LunaProvider");
+		algParams.init(new IvParameterSpec(FIXED_128BIT_IV_FOR_TESTS));
 		// cipher.init(Cipher.WRAP_MODE, wmk);
-		cipher.init(Cipher.UNWRAP_MODE, wmk);
+		cipher.init(Cipher.UNWRAP_MODE, wmk,algParams);
 		Key unwrappedExtractableKey = cipher.unwrap(bin.getBytes(), "AES", Cipher.SECRET_KEY);
 		out.println(getHex(unwrappedExtractableKey.getEncoded()));
 
