@@ -5,7 +5,6 @@ import static java.lang.System.out;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.security.AlgorithmParameters;
 import java.security.Key;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -13,7 +12,6 @@ import java.security.cert.CertificateException;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
-import javax.crypto.spec.IvParameterSpec;
 
 import org.apache.axis.encoding.Base64;
 
@@ -44,10 +42,10 @@ public class LoadPrivateKey {
 		
 		// Cipher cipher = Cipher.getInstance("AES", "LunaProvider");
 		Cipher cipher = Cipher.getInstance("RSA/CBC/PKCS5Padding", "LunaProvider");
-		AlgorithmParameters algParams = AlgorithmParameters.getInstance("IV", "LunaProvider");
-		algParams.init(new IvParameterSpec(new byte[16]));
-		// cipher.init(Cipher.WRAP_MODE, wmk);
-		cipher.init(Cipher.UNWRAP_MODE, wmk, algParams);
+//		AlgorithmParameters algParams = AlgorithmParameters.getInstance("IV", "LunaProvider");
+//		algParams.init(new IvParameterSpec(new byte[16]));
+		// cipher.init(Cipher.UNWRAP_MODE, wmk, algParams);
+		cipher.init(Cipher.WRAP_MODE, wmk);
 		Key unwrappedExtractableKey2 = cipher.unwrap(material, "AES", Cipher.SECRET_KEY);
 		out.println(getHex(unwrappedExtractableKey2.getEncoded()));
 
