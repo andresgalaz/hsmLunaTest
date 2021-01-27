@@ -28,8 +28,8 @@ public class LoadPrivateKey {
 	public static void main(String[] args) throws Exception {
 		HsmManager.login();
 
-		String bin = loadFromFile("/home/firmador/keys/bin.b64");
-		String material = loadFromFile("/home/firmador/keys/material.b64");
+		byte [] bin = loadFromFile("/home/firmador/keys/bin.b64");
+		byte [] material = loadFromFile("/home/firmador/keys/material.b64");
 
 		HsmManager.login();
 		HsmManager.setSecretKeysExtractable(true);
@@ -43,10 +43,10 @@ public class LoadPrivateKey {
 		algParams.init(new IvParameterSpec(new byte[16]));
 		// cipher.init(Cipher.WRAP_MODE, wmk);
 		cipher.init(Cipher.UNWRAP_MODE, wmk,algParams);
-		Key unwrappedExtractableKey = cipher.unwrap(bin.getBytes(), "AES", Cipher.SECRET_KEY);
+		Key unwrappedExtractableKey = cipher.unwrap(bin, "AES", Cipher.SECRET_KEY);
 		out.println(getHex(unwrappedExtractableKey.getEncoded()));
 
-		Key unwrappedExtractableKey2 = cipher.unwrap(material.getBytes(), "AES", Cipher.SECRET_KEY);
+		Key unwrappedExtractableKey2 = cipher.unwrap(material, "AES", Cipher.SECRET_KEY);
 		out.println(getHex(unwrappedExtractableKey2.getEncoded()));
 
 	}
@@ -55,10 +55,9 @@ public class LoadPrivateKey {
 		return "0x" + LunaUtils.getHexString(array, false).toUpperCase();
 	}
 
-	private static String loadFromFile(String cNombreAcrh)
+	private static byte [] loadFromFile(String cNombreAcrh)
 			throws NoSuchAlgorithmException, CertificateException, IOException, KeyStoreException {
 		String contentB64 = new String(Files.readAllBytes(Paths.get(cNombreAcrh)));
-		String content = new String(Base64.decode(contentB64), "UTF-8");
-		return content;
+		return Base64.decode(contentB64);
 	}
 }
