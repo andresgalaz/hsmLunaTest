@@ -60,11 +60,12 @@ public class WrapPrivateKey {
 		lunaKeyGenerator.init(256);
         SecretKey keyToWrap = lunaKeyGenerator.generateKey();
         out.println("Class of key to wrap: " + keyToWrap.getClass());		
-		byte[] b = cipher.wrap(keyToWrap);
-		// byte[] b = cipher.wrap(me.getPrivateKey());
+		byte[] b0 = cipher.wrap(keyToWrap);
+		out.println(getHex(b0));
+				
+		byte[] b1 = cipher.wrap(me.getPrivateKey());
+		out.println(getHex(b1));
 
-		// byte[] b = wrapKeyWithKek(wmk, (SecretKey) me.getPrivateKey());
-		out.println(getHex(b));
 
 		HsmManager.logout();
 	}
