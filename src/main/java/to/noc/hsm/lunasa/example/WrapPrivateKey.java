@@ -5,6 +5,8 @@ import static java.lang.System.out;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.security.AlgorithmParameters;
+import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -15,12 +17,20 @@ import java.security.cert.CertificateException;
 import java.security.interfaces.RSAPrivateKey;
 import java.util.Enumeration;
 
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
+
+import com.safenetinc.luna.LunaUtils;
 import com.safenetinc.luna.provider.key.LunaPrivateKeyRsa;
 
 public class WrapPrivateKey {
 	private Certificate certificate;
 	private PrivateKey privateKey;
 	private String alias;
+	private static final byte[] FIXED_128BIT_IV_FOR_TESTS = LunaUtils
+			.hexStringToByteArray("DEADD00D8BADF00DDEADBABED15EA5ED");
+	private static final String KEK_ALIAS = "MSP_WK";
 
 	public static void main(String[] args) throws Exception {
 		if (args.length != 2) {
@@ -30,8 +40,9 @@ public class WrapPrivateKey {
 		}
 		out.println("\n==========================================================");
 
-			HsmManager.login();
-			HsmManager.setSecretKeysExtractable(true);
+		HsmManager.login();
+		HsmManager.setSecretKeysExtractable(true);
+		SecretKey wmk = (SecretKey) HsmManager.getSavedKey(KEK_ALIAS);
 
 		WrapPrivateKey me = new WrapPrivateKey();
 		out.println("\n");
@@ -39,11 +50,13 @@ public class WrapPrivateKey {
 		out.println("alias:" + me.getAlias());
 		me.print(me.getPrivateKey());
 
+		byte[] b = wrapKeyWithKek(wmk, (SecretKey) me.getPrivateKey());
+		out.println(getHex(b));
 
 		HsmManager.logout();
 	}
 
-	public void loadCertificado(String filename, String clave) throws KeyStoreException, NoSuchAlgorithmException,
+	private void loadCertificado(String filename, String clave) throws KeyStoreException, NoSuchAlgorithmException,
 			CertificateException, IOException, UnrecoverableKeyException {
 		File f = new File(filename);
 		FileInputStream fis = new FileInputStream(f);
@@ -60,6 +73,17 @@ public class WrapPrivateKey {
 		setCertificate(p12.getCertificate(getAlias()));
 	}
 
+	//
+	// Wrap the passed in key with the KEK on the HSM
+	//
+	private static byte[] wrapKeyWithKek(SecretKey hsmKek, SecretKey softwareKey) throws GeneralSecurityException {
+		Cipher wrappingCipher = Cipher.getInstance("AES/CBC/PKCS5Padding", "LunaProvider");
+		AlgorithmParameters algParams = AlgorithmParameters.getInstance("IV", "LunaProvider");
+		algParams.init(new IvParameterSpec(FIXED_128BIT_IV_FOR_TESTS));
+		wrappingCipher.init(Cipher.WRAP_MODE, hsmKek, algParams);
+		return wrappingCipher.wrap(softwareKey);
+	}
+
 	public void print(LunaPrivateKeyRsa k) {
 		out.println("Class:" + k.getClass().getName());
 		out.println("Modulus:" + k.getModulus().toString());
@@ -71,6 +95,10 @@ public class WrapPrivateKey {
 		RSAPrivateKey rsaKey = (RSAPrivateKey) k;
 		out.println("Modulus:" + rsaKey.getModulus().toString());
 		out.println("Exponent:" + rsaKey.getPrivateExponent().toString());
+	}
+
+	private static String getHex(byte array[]) {
+		return "0x" + LunaUtils.getHexString(array, false).toUpperCase();
 	}
 
 	public Certificate getCertificate() {
