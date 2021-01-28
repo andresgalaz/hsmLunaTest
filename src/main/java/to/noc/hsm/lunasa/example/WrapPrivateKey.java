@@ -50,7 +50,14 @@ public class WrapPrivateKey {
 		out.println("alias:" + me.getAlias());
 		me.print(me.getPrivateKey());
 
-		byte[] b = wrapKeyWithKek(wmk, (SecretKey) me.getPrivateKey());
+		Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding", "LunaProvider");
+		// cipher.init(Cipher.WRAP_MODE, wmk);
+		AlgorithmParameters algParams = AlgorithmParameters.getInstance("IV", "LunaProvider");
+		algParams.init(new IvParameterSpec(new byte[16]));
+		cipher.init(Cipher.UNWRAP_MODE, wmk, algParams);
+		byte[] b = cipher.wrap(me.getPrivateKey());
+		
+		// byte[] b = wrapKeyWithKek(wmk, (SecretKey) me.getPrivateKey());
 		out.println(getHex(b));
 
 		HsmManager.logout();
@@ -71,17 +78,6 @@ public class WrapPrivateKey {
 		}
 		setPrivateKey((PrivateKey) p12.getKey(getAlias(), clave.toCharArray()));
 		setCertificate(p12.getCertificate(getAlias()));
-	}
-
-	//
-	// Wrap the passed in key with the KEK on the HSM
-	//
-	private static byte[] wrapKeyWithKek(SecretKey hsmKek, SecretKey softwareKey) throws GeneralSecurityException {
-		Cipher wrappingCipher = Cipher.getInstance("AES/CBC/PKCS5Padding", "LunaProvider");
-		AlgorithmParameters algParams = AlgorithmParameters.getInstance("IV", "LunaProvider");
-		algParams.init(new IvParameterSpec(FIXED_128BIT_IV_FOR_TESTS));
-		wrappingCipher.init(Cipher.WRAP_MODE, hsmKek, algParams);
-		return wrappingCipher.wrap(softwareKey);
 	}
 
 	public void print(LunaPrivateKeyRsa k) {
