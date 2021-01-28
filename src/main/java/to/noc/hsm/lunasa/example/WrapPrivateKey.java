@@ -39,7 +39,7 @@ public class WrapPrivateKey {
 		out.println("\n==========================================================");
 
 		HsmManager.login();
-		HsmManager.setSecretKeysExtractable(true);
+		// HsmManager.setSecretKeysExtractable(true);
 		SecretKey wmk = (SecretKey) HsmManager.getSavedKey(KEK_ALIAS);
 
 		WrapPrivateKey me = new WrapPrivateKey();
