@@ -48,12 +48,11 @@ public class WrapPrivateKey {
 		out.println("alias:" + me.getAlias());
 		me.print(me.getPrivateKey());
 
-		// Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding", "LunaProvider");
-		Cipher cipher = Cipher.getInstance("AES/CBC/NoPadding", "LunaProvider");
+		Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding", "LunaProvider");
 		// cipher.init(Cipher.WRAP_MODE, wmk);
-		AlgorithmParameters algParams = AlgorithmParameters.getInstance("IV", "LunaProvider");
-		algParams.init(new IvParameterSpec(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }));
-		cipher.init(Cipher.WRAP_MODE, wmk, algParams);
+		// AlgorithmParameters algParams = AlgorithmParameters.getInstance("IV", "LunaProvider");
+		// algParams.init(new IvParameterSpec(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }));
+		cipher.init(Cipher.WRAP_MODE, wmk, new IvParameterSpec(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }));
 		byte[] b = cipher.wrap(me.getPrivateKey());
 
 		// byte[] b = wrapKeyWithKek(wmk, (SecretKey) me.getPrivateKey());
