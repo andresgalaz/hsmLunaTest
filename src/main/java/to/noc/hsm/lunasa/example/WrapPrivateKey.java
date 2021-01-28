@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.AlgorithmParameters;
-import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -28,8 +27,7 @@ public class WrapPrivateKey {
 	private Certificate certificate;
 	private PrivateKey privateKey;
 	private String alias;
-	private static final byte[] FIXED_128BIT_IV_FOR_TESTS = LunaUtils
-			.hexStringToByteArray("DEADD00D8BADF00DDEADBABED15EA5ED");
+	// private static final byte[] FIXED_128BIT_IV_FOR_TESTS = LunaUtils.hexStringToByteArray("DEADD00D8BADF00DDEADBABED15EA5ED");
 	private static final String KEK_ALIAS = "MSP_WK";
 
 	public static void main(String[] args) throws Exception {
@@ -53,10 +51,10 @@ public class WrapPrivateKey {
 		Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding", "LunaProvider");
 		// cipher.init(Cipher.WRAP_MODE, wmk);
 		AlgorithmParameters algParams = AlgorithmParameters.getInstance("IV", "LunaProvider");
-		algParams.init(new IvParameterSpec(new byte[16]));
+		algParams.init(new IvParameterSpec(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }));
 		cipher.init(Cipher.WRAP_MODE, wmk, algParams);
 		byte[] b = cipher.wrap(me.getPrivateKey());
-		
+
 		// byte[] b = wrapKeyWithKek(wmk, (SecretKey) me.getPrivateKey());
 		out.println(getHex(b));
 
