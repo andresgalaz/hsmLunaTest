@@ -17,6 +17,7 @@ import java.security.interfaces.RSAPrivateKey;
 import java.util.Enumeration;
 
 import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 
@@ -53,7 +54,13 @@ public class WrapPrivateKey {
 		// AlgorithmParameters algParams = AlgorithmParameters.getInstance("IV", "LunaProvider");
 		// algParams.init(new IvParameterSpec(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }));
 		cipher.init(Cipher.WRAP_MODE, wmk, new IvParameterSpec(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }));
-		byte[] b = cipher.wrap(me.getPrivateKey());
+		
+		KeyGenerator lunaKeyGenerator = KeyGenerator.getInstance("AES", "LunaProvider");
+		lunaKeyGenerator.init(256);
+        SecretKey keyToWrap = lunaKeyGenerator.generateKey();
+        out.println("Class of key to wrap: " + keyToWrap.getClass());		
+		byte[] b = cipher.wrap(keyToWrap);
+		// byte[] b = cipher.wrap(me.getPrivateKey());
 
 		// byte[] b = wrapKeyWithKek(wmk, (SecretKey) me.getPrivateKey());
 		out.println(getHex(b));
