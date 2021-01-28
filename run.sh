@@ -16,12 +16,11 @@ fi
 #java -cp lib/*:build/classes/main to.noc.hsm.lunasa.example.KeyWrappingExample
 #java -cp lib/*:build/classes/main to.noc.hsm.lunasa.example.WrappedKeySerializationExample
 #java -cp lib/*:build/classes/main to.noc.hsm.lunasa.example.KeyWrappingWithHsmGeneratedKeysExample
-java -cp lib/*:build/classes/main to.noc.hsm.lunasa.example.LoadPrivateKey << LN_2_EMPTY
-
-
-LN_2_EMPTY
-# /home/firmador/keys/testHSM.p12 Asdfgh954321
-# java -cp lib/*:build/classes/main to.noc.hsm.lunasa.example.SavePrivateKey $* << LN_2_EMPTY
+#java -cp lib/*:build/classes/main to.noc.hsm.lunasa.example.LoadPrivateKey
+#/home/firmador/keys/testHSM.p12 Asdfgh954321
+#java -cp lib/*:build/classes/main to.noc.hsm.lunasa.example.SavePrivateKey $* 
+java -cp lib/*:build/classes/main to.noc.hsm.lunasa.example.WrapPrivateKey 
+# << LN_2_EMPTY
 # 
 # 
 # LN_2_EMPTY
