@@ -45,10 +45,11 @@ public class WrapPrivateKey {
 
 		HsmManager.login();
 		// HsmManager.setSecretKeysExtractable(true);
+		out.println("\n");
 		SecretKey wmk = (SecretKey) HsmManager.getSavedKey(KEK_ALIAS);
+		out.println("wmk:" + wmk);
 
 		WrapPrivateKey me = new WrapPrivateKey();
-		out.println("\n");
 		me.loadCertificado(args[0], args[1]);
 		out.println("alias:" + me.getAlias());
 		me.print(me.getPrivateKey());
@@ -58,7 +59,7 @@ public class WrapPrivateKey {
 		// Cipher cipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA-256ANDMGF1Padding",
 		// "LunaProvider");
 		// Cipher cipher = Cipher.getInstance("RSA/ECB/NoPadding", "BC");
-		Cipher cipher = Cipher.getInstance("AES/CCB/NoPadding", "LunaProvider");
+		Cipher cipher = Cipher.getInstance("AES/CBC/NoPadding", "LunaProvider");
 		// cipher.init(Cipher.WRAP_MODE, wmk);
 		// AlgorithmParameters algParams = AlgorithmParameters.getInstance("IV",
 		// "LunaProvider");
