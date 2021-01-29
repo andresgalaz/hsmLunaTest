@@ -54,7 +54,7 @@ public class WrapPrivateKey {
 		// Cipher cipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA-256ANDMGF1Padding",
 		// "LunaProvider");
 		// Cipher cipher = Cipher.getInstance("RSA/ECB/NoPadding", "BC");
-		Cipher cipher = Cipher.getInstance("AESKW/PKCS5Padding", "BC");
+		Cipher cipher = Cipher.getInstance("AESKW/CBC/PKCS5Padding", "BC");
 		// cipher.init(Cipher.WRAP_MODE, wmk);
 		// AlgorithmParameters algParams = AlgorithmParameters.getInstance("IV",
 		// "LunaProvider");
