@@ -71,8 +71,33 @@ public class WrapPrivateKey {
 		RSAPrivateKey k = (RSAPrivateKey) me.getPrivateKey();
 		RSAPrivateKeySpec rsaPrivateKeySpec = new RSAPrivateKeySpec(k.getModulus(), k.getPrivateExponent());
 		
-		byte[] b1 = cipher.wrap((Key) k);
-		out.println(getHex(b1));
+		try {
+			byte[] b1 = cipher.wrap(k);
+			out.println(getHex(b1));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		try {
+			byte[] b1 = cipher.wrap((PrivateKey)rsaPrivateKeySpec);
+			out.println(getHex(b1));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		try {
+			byte[] b1 = cipher.wrap((PrivateKey)k);
+			out.println(getHex(b1));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		try {
+			byte[] b1 = cipher.wrap(me.getPrivateKey());
+			out.println(getHex(b1));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 		HsmManager.logout();
 	}
