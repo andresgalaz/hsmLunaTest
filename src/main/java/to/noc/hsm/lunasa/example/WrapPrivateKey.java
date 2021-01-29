@@ -5,7 +5,6 @@ import static java.lang.System.out;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.security.AlgorithmParameters;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -28,7 +27,8 @@ public class WrapPrivateKey {
 	private Certificate certificate;
 	private PrivateKey privateKey;
 	private String alias;
-	// private static final byte[] FIXED_128BIT_IV_FOR_TESTS = LunaUtils.hexStringToByteArray("DEADD00D8BADF00DDEADBABED15EA5ED");
+	// private static final byte[] FIXED_128BIT_IV_FOR_TESTS =
+	// LunaUtils.hexStringToByteArray("DEADD00D8BADF00DDEADBABED15EA5ED");
 	private static final String KEK_ALIAS = "MSP_WK";
 
 	public static void main(String[] args) throws Exception {
@@ -48,26 +48,29 @@ public class WrapPrivateKey {
 		me.loadCertificado(args[0], args[1]);
 		out.println("alias:" + me.getAlias());
 		me.print(me.getPrivateKey());
-        out.println("Class of PrivateKey: " + me.getPrivateKey().getClass());		
+		out.println("Class of PrivateKey: " + me.getPrivateKey().getClass());
 
 		// Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding", "LunaProvider");
-        // Cipher cipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA-256ANDMGF1Padding", "LunaProvider");
+		// Cipher cipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA-256ANDMGF1Padding",
+		// "LunaProvider");
 		Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
 		// cipher.init(Cipher.WRAP_MODE, wmk);
-		// AlgorithmParameters algParams = AlgorithmParameters.getInstance("IV", "LunaProvider");
-		// algParams.init(new IvParameterSpec(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }));
-		cipher.init(Cipher.WRAP_MODE, wmk, new IvParameterSpec(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }));
-		
+		// AlgorithmParameters algParams = AlgorithmParameters.getInstance("IV",
+		// "LunaProvider");
+		// algParams.init(new IvParameterSpec(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		// 0, 0, 0, 0, 0, 0 }));
+		cipher.init(Cipher.WRAP_MODE, wmk,
+				new IvParameterSpec(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }));
+
 		KeyGenerator lunaKeyGenerator = KeyGenerator.getInstance("AES", "LunaProvider");
 		lunaKeyGenerator.init(256);
-        SecretKey keyToWrap = lunaKeyGenerator.generateKey();
-        out.println("Class of key to wrap: " + keyToWrap.getClass());		
+		SecretKey keyToWrap = lunaKeyGenerator.generateKey();
+		out.println("Class of key to wrap: " + keyToWrap.getClass());
 		byte[] b0 = cipher.wrap(keyToWrap);
 		out.println(getHex(b0));
-				
+
 		byte[] b1 = cipher.wrap(me.getPrivateKey());
 		out.println(getHex(b1));
-
 
 		HsmManager.logout();
 	}
