@@ -44,7 +44,7 @@ public class WrapPrivateKey {
 		// Security.addProvider(new BouncyCastleProvider());
 
 		HsmManager.login();
-		// HsmManager.setSecretKeysExtractable(true);
+		HsmManager.setSecretKeysExtractable(true);
 		out.println("\n");
 		SecretKey wmk = (SecretKey) HsmManager.getSavedKey(KEK_ALIAS);
 		out.println("wmk:" + wmk + ", length=" + wmk.getEncoded().length);
