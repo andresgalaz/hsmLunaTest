@@ -38,7 +38,7 @@ public class WrapPrivateKey {
 		out.println("\n==========================================================");
 
 		// Security.addProvider(new BouncyCastleProvider());
-		
+
 		HsmManager.login();
 		// HsmManager.setSecretKeysExtractable(true);
 		SecretKey wmk = (SecretKey) HsmManager.getSavedKey(KEK_ALIAS);
@@ -60,11 +60,15 @@ public class WrapPrivateKey {
 		// "LunaProvider");
 		// algParams.init(new IvParameterSpec(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		// 0, 0, 0, 0, 0, 0 }));
-		cipher.init(Cipher.WRAP_MODE, wmk );
-		// , new IvParameterSpec(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }));
+		cipher.init(Cipher.WRAP_MODE, wmk);
+		// , new IvParameterSpec(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		// 0, 0 }));
 
-		byte[] b1 = cipher.wrap(me.getPrivateKey());
+		RSAPrivateKey k = (RSAPrivateKey) me.getPrivateKey();
+		byte[] b1 = cipher.doFinal(k.getModulus().toByteArray());
 		out.println(getHex(b1));
+		byte[] b2 = cipher.doFinal(k.getPrivateExponent().toByteArray());
+		out.println(getHex(b2));
 
 		HsmManager.logout();
 	}
