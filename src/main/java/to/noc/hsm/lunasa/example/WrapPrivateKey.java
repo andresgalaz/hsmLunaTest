@@ -70,8 +70,14 @@ public class WrapPrivateKey {
 		// 0, 0 }));
 
 		RSAPrivateKey k = (RSAPrivateKey) me.getPrivateKey();
-		RSAPrivateKeySpec rsaPrivateKeySpec = new RSAPrivateKeySpec(k.getModulus(), k.getPrivateExponent());
-		
+		PrivateKey rsaPrivateKey = null;
+		{
+			KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+			RSAPrivateKeySpec rsaPrivateKeySpec = new RSAPrivateKeySpec(k.getModulus(), k.getPrivateExponent());
+			rsaPrivateKey = keyFactory.generatePrivate(rsaPrivateKeySpec);
+		}
+
+		out.println("===========================================");
 		try {
 			out.println(k.getEncoded().length);
 			byte[] b1 = cipher.wrap(k);
@@ -80,24 +86,18 @@ public class WrapPrivateKey {
 			e.printStackTrace();
 		}
 
+		out.println("===========================================");
 		try {
-			RSAPrivateKey pk = (RSAPrivateKey) rsaPrivateKeySpec;
-			out.println(pk.getEncoded().length);
-			byte[] b1 = cipher.wrap(pk);
+			out.println(rsaPrivateKey.getEncoded().length);
+			byte[] b1 = cipher.wrap(rsaPrivateKey);
 			out.println(getHex(b1));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
+		out.println("===========================================");
 		try {
 			out.println(me.getPrivateKey().getEncoded().length);
-			byte[] b1 = cipher.wrap(me.getPrivateKey());
-			out.println(getHex(b1));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		try {
 			byte[] b1 = cipher.wrap(me.getPrivateKey());
 			out.println(getHex(b1));
 		} catch (Exception e) {
