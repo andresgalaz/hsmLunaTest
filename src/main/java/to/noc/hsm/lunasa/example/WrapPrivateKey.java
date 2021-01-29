@@ -61,7 +61,7 @@ public class WrapPrivateKey {
 		// "LunaProvider");
 		// algParams.init(new IvParameterSpec(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		// 0, 0, 0, 0, 0, 0 }));
-		cipher.init(Cipher.WRAP_MODE, wmk);
+		cipher.init(Cipher.ENCRYPT_MODE, wmk);
 		// , new IvParameterSpec(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		// 0, 0 }));
 
