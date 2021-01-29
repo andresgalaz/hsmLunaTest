@@ -47,7 +47,7 @@ public class WrapPrivateKey {
 		// HsmManager.setSecretKeysExtractable(true);
 		out.println("\n");
 		SecretKey wmk = (SecretKey) HsmManager.getSavedKey(KEK_ALIAS);
-		out.println("wmk:" + wmk);
+		out.println("wmk:" + wmk + ", length=" + wmk.getEncoded().length);
 
 		WrapPrivateKey me = new WrapPrivateKey();
 		me.loadCertificado(args[0], args[1]);
