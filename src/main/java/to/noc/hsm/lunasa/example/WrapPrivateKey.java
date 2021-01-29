@@ -5,6 +5,8 @@ import static java.lang.System.out;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.security.Key;
+import java.security.KeyFactory;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -13,6 +15,7 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.interfaces.RSAPrivateKey;
+import java.security.spec.RSAPrivateKeySpec;
 import java.util.Enumeration;
 
 import javax.crypto.Cipher;
@@ -61,15 +64,15 @@ public class WrapPrivateKey {
 		// "LunaProvider");
 		// algParams.init(new IvParameterSpec(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		// 0, 0, 0, 0, 0, 0 }));
-		cipher.init(Cipher.ENCRYPT_MODE, wmk);
+		cipher.init(Cipher.WRAP_MODE, wmk);
 		// , new IvParameterSpec(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		// 0, 0 }));
 
 		RSAPrivateKey k = (RSAPrivateKey) me.getPrivateKey();
-		byte[] b1 = cipher.doFinal(k.getModulus().toByteArray());
+		RSAPrivateKeySpec rsaPrivateKeySpec = new RSAPrivateKeySpec(k.getModulus(), k.getPrivateExponent());
+		
+		byte[] b1 = cipher.wrap((Key) rsaPrivateKeySpec);
 		out.println(getHex(b1));
-		byte[] b2 = cipher.doFinal(k.getPrivateExponent().toByteArray());
-		out.println(getHex(b2));
 
 		HsmManager.logout();
 	}
