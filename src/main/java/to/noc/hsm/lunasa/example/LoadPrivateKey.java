@@ -45,7 +45,7 @@ public class LoadPrivateKey {
 		Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding", "LunaProvider");
 		// cipher.init(Cipher.WRAP_MODE, wmk);
 		AlgorithmParameters algParams = AlgorithmParameters.getInstance("IV", "LunaProvider");
-		algParams.init(new IvParameterSpec(new byte[16]));
+		algParams.init(new IvParameterSpec(material)); // new byte[16]));
 		cipher.init(Cipher.DECRYPT_MODE, wmk, algParams);
 		
 		cipher.doFinal(bin); // , "AES", Cipher.SECRET_KEY);
