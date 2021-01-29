@@ -37,17 +37,18 @@ public class LoadPrivateKey {
 		out.println("\nŧMaster KEY");
 		out.println(wmk);
 		out.println("\n\tBIN");
-		out.println(getHex(bin));
+		out.println(bin.length);
 		out.println("\n\tMATERIAL");
-		out.println(getHex(material));
+		out.println(material.length);
 		out.println();
 		
 		Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding", "LunaProvider");
 		// cipher.init(Cipher.WRAP_MODE, wmk);
 		AlgorithmParameters algParams = AlgorithmParameters.getInstance("IV", "LunaProvider");
 		algParams.init(new IvParameterSpec(new byte[16]));
-		cipher.init(Cipher.UNWRAP_MODE, wmk, algParams);
+		cipher.init(Cipher.DECRYPT_MODE, wmk, algParams);
 		
+		cipher.doFinal(bin); // , "AES", Cipher.SECRET_KEY);
 		Key unwrappedExtractableKey = cipher.unwrap(bin, "AES", Cipher.SECRET_KEY);
 		out.println(getHex(unwrappedExtractableKey.getEncoded()));
 
