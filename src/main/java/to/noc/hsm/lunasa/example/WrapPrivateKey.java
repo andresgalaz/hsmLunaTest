@@ -63,7 +63,7 @@ public class WrapPrivateKey {
 				new IvParameterSpec(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }));
 
 		KeyGenerator lunaKeyGenerator = KeyGenerator.getInstance("AES", "LunaProvider");
-		lunaKeyGenerator.init(256);
+		lunaKeyGenerator.init(128);
 		SecretKey keyToWrap = lunaKeyGenerator.generateKey();
 		out.println("Class of key to wrap: " + keyToWrap.getClass());
 		byte[] b0 = cipher.wrap(keyToWrap);
