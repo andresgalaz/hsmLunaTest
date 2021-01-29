@@ -9,7 +9,6 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
-import java.security.Security;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
@@ -18,8 +17,6 @@ import java.util.Enumeration;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
-
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import com.safenetinc.luna.LunaUtils;
 import com.safenetinc.luna.provider.key.LunaPrivateKeyRsa;
@@ -40,7 +37,7 @@ public class WrapPrivateKey {
 		}
 		out.println("\n==========================================================");
 
-		Security.addProvider(new BouncyCastleProvider());
+		// Security.addProvider(new BouncyCastleProvider());
 		
 		HsmManager.login();
 		// HsmManager.setSecretKeysExtractable(true);
@@ -57,7 +54,7 @@ public class WrapPrivateKey {
 		// Cipher cipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA-256ANDMGF1Padding",
 		// "LunaProvider");
 		// Cipher cipher = Cipher.getInstance("RSA/ECB/NoPadding", "BC");
-		Cipher cipher = Cipher.getInstance("AES/CBC/PKCS7Padding", "LunaProvider");
+		Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding", "LunaProvider");
 		// cipher.init(Cipher.WRAP_MODE, wmk);
 		// AlgorithmParameters algParams = AlgorithmParameters.getInstance("IV",
 		// "LunaProvider");
