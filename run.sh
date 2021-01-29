@@ -19,8 +19,7 @@ fi
 #/home/firmador/keys/testHSM.p12 Asdfgh954321
 #java -cp lib/*:build/classes/main to.noc.hsm.lunasa.example.SavePrivateKey $* 
 #java -cp lib/*:build/classes/main to.noc.hsm.lunasa.example.LoadPrivateKey
-java -cp lib/*:build/classes/main to.noc.hsm.lunasa.example.WrapPrivateKey /home/firmador/keys/testHSM.p12 Asdfgh954321 
- << LN_2_EMPTY
+java -cp lib/*:build/classes/main to.noc.hsm.lunasa.example.WrapPrivateKey /home/firmador/keys/testHSM.p12 Asdfgh954321 << LN_2_EMPTY
  
  
 LN_2_EMPTY
