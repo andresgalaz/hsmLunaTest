@@ -53,7 +53,7 @@ public class WrapPrivateKey {
 		// Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding", "LunaProvider");
 		// Cipher cipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA-256ANDMGF1Padding",
 		// "LunaProvider");
-		Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+		Cipher cipher = Cipher.getInstance("AESWrap/PKCS5Padding");
 		// cipher.init(Cipher.WRAP_MODE, wmk);
 		// AlgorithmParameters algParams = AlgorithmParameters.getInstance("IV",
 		// "LunaProvider");
@@ -61,13 +61,6 @@ public class WrapPrivateKey {
 		// 0, 0, 0, 0, 0, 0 }));
 		cipher.init(Cipher.WRAP_MODE, wmk,
 				new IvParameterSpec(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }));
-
-		KeyGenerator lunaKeyGenerator = KeyGenerator.getInstance("AES", "LunaProvider");
-		lunaKeyGenerator.init(128);
-		SecretKey keyToWrap = lunaKeyGenerator.generateKey();
-		out.println("Class of key to wrap: " + keyToWrap.getClass());
-		byte[] b0 = cipher.wrap(keyToWrap);
-		out.println(getHex(b0));
 
 		byte[] b1 = cipher.wrap(me.getPrivateKey());
 		out.println(getHex(b1));
