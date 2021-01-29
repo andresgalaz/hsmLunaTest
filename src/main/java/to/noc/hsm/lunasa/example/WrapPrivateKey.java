@@ -59,8 +59,8 @@ public class WrapPrivateKey {
 		// "LunaProvider");
 		// algParams.init(new IvParameterSpec(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		// 0, 0, 0, 0, 0, 0 }));
-		cipher.init(Cipher.WRAP_MODE, wmk,
-				new IvParameterSpec(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }));
+		cipher.init(Cipher.WRAP_MODE, wmk );
+		// , new IvParameterSpec(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }));
 
 		byte[] b1 = cipher.wrap(me.getPrivateKey());
 		out.println(getHex(b1));
