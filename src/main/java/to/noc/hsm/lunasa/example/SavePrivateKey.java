@@ -64,7 +64,17 @@ public class SavePrivateKey {
 			keyStore = KeyStore.getInstance("Luna");
 			keyStore.load(null, null);
 		}
-		SecretKey wmk = (SecretKey) HsmManager.getSavedKey(KEK_ALIAS);		
+		if (HsmManager.hasSavedKey(KEK_ALIAS)) {
+			HsmManager.deleteKey(KEK_ALIAS);
+		}
+
+		KeyGenerator kg = KeyGenerator.getInstance("AES", "LunaProvider");
+		kg.init(128);
+
+		LunaSecretKey wmk = (LunaSecretKey) kg.generateKey();
+		HsmManager.saveKey(KEK_ALIAS, wmk);
+		
+		// SecretKey wmk = (SecretKey) HsmManager.getSavedKey(KEK_ALIAS);		
 		out.println("wmk:" + wmk + ", length=" + wmk.getEncoded().length);
 		
 		if(wmk!=null)
