@@ -31,29 +31,31 @@ public class SavePrivateKey {
 	private Certificate certificate;
 	private PrivateKey privateKey;
 	private String alias;
+	private static final String KEK_ALIAS = "KEK_AGV";
 
 	public static void main(String[] args) throws Exception {
-		if (args.length == 0) {
-			out.println("Faltan argumentos. Modo de uso:");
-			out.println("\t-c <alias>       # crea la KEK con el <alias>");
-			out.println("\t-v <alias>       # verifica si existe la KEK");
-			return;
-		}
-		out.println("\n==========================================================");
-		if ("-c".equalsIgnoreCase(args[0])) {
-			// Crea una KEK
-			creaKek(args[1]);
-			return;
-		}
-		if ("-v".equalsIgnoreCase(args[0])) {
-			// Crea una KEK
-			verificaKek(args[1]);
-			return;
-		}
-		if (true) {
-			out.println("Se esperaban dos un parámetros: archivo y password");
-			return;
-		}
+		
+//		if (args.length == 0) {
+//			out.println("Faltan argumentos. Modo de uso:");
+//			out.println("\t-c <alias>       # crea la KEK con el <alias>");
+//			out.println("\t-v <alias>       # verifica si existe la KEK");
+//			return;
+//		}
+//		out.println("\n==========================================================");
+//		if ("-c".equalsIgnoreCase(args[0])) {
+//			// Crea una KEK
+//			creaKek(args[1]);
+//			return;
+//		}
+//		if ("-v".equalsIgnoreCase(args[0])) {
+//			// Crea una KEK
+//			verificaKek(args[1]);
+//			return;
+//		}
+//		if (true) {
+//			out.println("Se esperaban dos un parámetros: archivo y password");
+//			return;
+//		}
 		SavePrivateKey me = new SavePrivateKey();
 
 		if (bHayHsm) {
@@ -62,6 +64,11 @@ public class SavePrivateKey {
 			keyStore = KeyStore.getInstance("Luna");
 			keyStore.load(null, null);
 		}
+		SecretKey wmk = (SecretKey) HsmManager.getSavedKey(KEK_ALIAS);		
+		out.println("wmk:" + wmk + ", length=" + wmk.getEncoded().length);
+		
+		if(wmk!=null)
+			return;
 
 		out.println("\n");
 		me.loadCertificado(args[0], args[1]);
@@ -70,8 +77,6 @@ public class SavePrivateKey {
 
 		// Limpia
 		deleteKey(me.getAlias());
-		deleteKey(me.getAlias() + "_M");
-		deleteKey(me.getAlias() + "_E");
 		// Graba
 		saveKey(me.getAlias(), me.getPrivateKey(), new Certificate[] { me.getCertificate() });
 
