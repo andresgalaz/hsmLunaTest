@@ -69,7 +69,7 @@ public class SavePrivateKey {
 		}
 
 		KeyGenerator kg = KeyGenerator.getInstance("AES", "LunaProvider");
-		kg.init(128);
+		kg.init(256);
 
 		LunaSecretKey wmk = (LunaSecretKey) kg.generateKey();
 		HsmManager.saveKey(KEK_ALIAS, wmk);
