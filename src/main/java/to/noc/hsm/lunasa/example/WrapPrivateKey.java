@@ -51,8 +51,8 @@ public class WrapPrivateKey {
 		KeyGenerator kg = KeyGenerator.getInstance("AES", "LunaProvider");
 		kg.init(128);
 
-		LunaSecretKey wmk = (LunaSecretKey) kg.generateKey();		
-		LunaSecretKey wmkx = (LunaSecretKey ) HsmManager.getSavedKey(KEK_ALIAS);
+		LunaSecretKey wmkx = (LunaSecretKey) kg.generateKey();		
+		LunaSecretKey wmk = (LunaSecretKey ) HsmManager.getSavedKey(KEK_ALIAS);
 		
 		out.println("wmk:" + wmk + ", length=" + wmk.getEncoded().length*8);
 		out.println("wmkx:" + wmkx + ", length=" + wmkx.getEncoded().length*8);
