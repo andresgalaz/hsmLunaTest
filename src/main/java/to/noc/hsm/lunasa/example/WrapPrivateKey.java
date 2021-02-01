@@ -19,10 +19,12 @@ import java.security.spec.RSAPrivateKeySpec;
 import java.util.Enumeration;
 
 import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
 import com.safenetinc.luna.LunaUtils;
 import com.safenetinc.luna.provider.key.LunaPrivateKeyRsa;
+import com.safenetinc.luna.provider.key.LunaSecretKey;
 
 public class WrapPrivateKey {
 	private Certificate certificate;
@@ -46,7 +48,12 @@ public class WrapPrivateKey {
 		HsmManager.login();
 		HsmManager.setSecretKeysExtractable(true);
 		out.println("\n");
-		SecretKey wmk = (SecretKey) HsmManager.getSavedKey(KEK_ALIAS);
+		KeyGenerator kg = KeyGenerator.getInstance("AES", "LunaProvider");
+		kg.init(256);
+
+		LunaSecretKey wmk = (LunaSecretKey) kg.generateKey();
+		
+		// SecretKey wmk = (SecretKey) HsmManager.getSavedKey(KEK_ALIAS);
 		out.println("wmk:" + wmk + ", length=" + wmk.getEncoded().length);
 
 		WrapPrivateKey me = new WrapPrivateKey();
