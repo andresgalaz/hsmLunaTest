@@ -49,13 +49,13 @@ public class WrapPrivateKey {
 		HsmManager.setSecretKeysExtractable(true);
 		out.println("\n");
 		KeyGenerator kg = KeyGenerator.getInstance("AES", "LunaProvider");
-		kg.init(256);
+		kg.init(128);
 
 		LunaSecretKey wmk = (LunaSecretKey) kg.generateKey();		
 		LunaSecretKey wmkx = (LunaSecretKey ) HsmManager.getSavedKey(KEK_ALIAS);
 		
-		out.println("wmk:" + wmk + ", length=" + wmk.getEncoded().length);
-		out.println("wmkx:" + wmkx + ", length=" + wmkx.getEncoded().length);
+		out.println("wmk:" + wmk + ", length=" + wmk.getEncoded().length*8);
+		out.println("wmkx:" + wmkx + ", length=" + wmkx.getEncoded().length*8);
 
 		WrapPrivateKey me = new WrapPrivateKey();
 		me.loadCertificado(args[0], args[1]);
