@@ -109,7 +109,7 @@ public class LoadPrivateKey {
 				int offset = 4;
 				byte[] bin = new byte[sBin.length() - offset];
 				System.arraycopy(sBin.getBytes(), offset, bin, 0, bin.length);
-				bin = Base64.decode(sBin);
+				bin = Base64.decode(sBin.substring(offset));
 				byte [] unwrappedBin = cipher.doFinal(bin);
 				out.println(getHex(unwrappedBin));
 				Key unwrappedMaterial = cipher.unwrap(sMaterial.getBytes(), "AES", Cipher.SECRET_KEY);
