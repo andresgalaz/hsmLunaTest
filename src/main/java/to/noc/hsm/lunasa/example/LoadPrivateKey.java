@@ -104,14 +104,13 @@ public class LoadPrivateKey {
 //		Cipher.RSA/*/NoPadding
 //		Cipher.RSA/*/OAEPWithSHA1AndMGF1Padding
 //		Cipher.RSA/*/PKCS1v1_5 
-		Cipher cipher = Cipher.getInstance("RSA/*/NoPadding", "LunaProvider");
+		Cipher cipher = Cipher.getInstance("AES/ECB/NoPadding", "LunaProvider");
 		AlgorithmParameters algParams = AlgorithmParameters.getInstance("IV", "LunaProvider");
 		algParams.init(new IvParameterSpec(new byte[16]));
 
-//		cipher.init(Cipher.UNWRAP_MODE, wmk, algParams);
+		cipher.init(Cipher.UNWRAP_MODE, wmk, algParams);
 //		cipher.init(Cipher.UNWRAP_MODE, wmk, new IvParameterSpec(new byte[16]));
-		cipher.init(Cipher.UNWRAP_MODE, wmk);
-
+//		cipher.init(Cipher.UNWRAP_MODE, wmk);
 
 		String cSql = "SELECT id, lo_get(bin) bin, lo_get(material) material \n" //
 				+ " FROM  public.luna_key \n" //
@@ -157,14 +156,14 @@ public class LoadPrivateKey {
 				} catch (Exception e) {
 					out.println(e.getMessage());
 				}
-				
+
 				try {
 					Key unwrappedBin = cipher.unwrap(sBin.getBytes(), "DES", Cipher.SECRET_KEY);
 					out.println(getHex(unwrappedBin.getEncoded()));
 				} catch (Exception e) {
 					out.println(e.getMessage());
 				}
-				
+
 				Key unwrappedMaterial = cipher.unwrap(sMaterial.getBytes(), "AES", Cipher.SECRET_KEY);
 				out.println(getHex(unwrappedMaterial.getEncoded()));
 
