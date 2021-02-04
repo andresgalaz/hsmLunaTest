@@ -22,7 +22,6 @@ import javax.crypto.spec.IvParameterSpec;
 import org.apache.axis.encoding.Base64;
 
 import com.safenetinc.luna.LunaUtils;
-import com.safenetinc.luna.provider.cipher.LunaCipher;
 
 public class LoadPrivateKey {
 	private static final String KEK_ALIAS = "MSP_WK";
@@ -72,7 +71,7 @@ public class LoadPrivateKey {
 	private static void procesa(Connection con, SecretKey wmk) throws Exception {
 		out.println("\nMaster KEY");
 		out.println(wmk);
-
+		
 //		Cipher.AES/CBC/PKCS5Padding
 //		Cipher.AES/CBC/NoPadding
 //		Cipher.AES/ECB/NoPadding
@@ -142,86 +141,41 @@ public class LoadPrivateKey {
 //				bin = Base64.decode(sBin.substring(offset));
 
 				try {
-					Key unwrappedBin = cipher.unwrap(sBin.getBytes(), "RSA/ECB/PKCS1Padding", Cipher.SECRET_KEY);
+					Key unwrappedBin = cipher.unwrap(sBin.getBytes(), "RSA", Cipher.SECRET_KEY);
 					out.println(getHex(unwrappedBin.getEncoded()));
 				} catch (Exception e) {
 					out.println(e.getMessage());
 				}
 				try {
-					Key unwrappedBin = cipher.unwrap(sBin.getBytes(), "RSA/ECB/NoPadding", Cipher.SECRET_KEY);
-					out.println(getHex(unwrappedBin.getEncoded()));
-				} catch (Exception e) {
-					out.println(e.getMessage());
-				}
-
-				try {
-					Key unwrappedBin = cipher.unwrap(sBin.getBytes(), "DES/ECB/NoPadding", Cipher.SECRET_KEY);
-					out.println(getHex(unwrappedBin.getEncoded()));
-				} catch (Exception e) {
-					out.println(e.getMessage());
-				}
-
-				try {
-					Key unwrappedBin = cipher.unwrap(sBin.getBytes(), "DES/ECB/PKCS5Padding", Cipher.SECRET_KEY);
-					out.println(getHex(unwrappedBin.getEncoded()));
-				} catch (Exception e) {
-					out.println(e.getMessage());
-				}
-
-				try {
-					Key unwrappedBin = cipher.unwrap(sBin.getBytes(), "DESede/ECB/NoPadding", Cipher.SECRET_KEY);
-					out.println(getHex(unwrappedBin.getEncoded()));
-				} catch (Exception e) {
-					out.println(e.getMessage());
-				}
-
-				try {
-					Key unwrappedBin = cipher.unwrap(sBin.getBytes(), "DESede/ECB/PKCS5Padding", Cipher.SECRET_KEY);
-					out.println(getHex(unwrappedBin.getEncoded()));
-				} catch (Exception e) {
-					out.println(e.getMessage());
-				}
-
-				try {
-					Key unwrappedBin = cipher.unwrap(sBin.getBytes(), "IDEA/ECB/NoPadding", Cipher.SECRET_KEY);
-					out.println(getHex(unwrappedBin.getEncoded()));
-				} catch (Exception e) {
-					out.println(e.getMessage());
-				}
-
-				try {
-					Key unwrappedBin = cipher.unwrap(sBin.getBytes(), "IDEA/ECB/PKCS5Padding", Cipher.SECRET_KEY);
-					out.println(getHex(unwrappedBin.getEncoded()));
-				} catch (Exception e) {
-					out.println(e.getMessage());
-				}
-
-				try {
-					Key unwrappedBin = cipher.unwrap(sBin.getBytes(), "CAST128/ECB/NoPadding", Cipher.SECRET_KEY);
-					out.println(getHex(unwrappedBin.getEncoded()));
-				} catch (Exception e) {
-					out.println(e.getMessage());
-				}
-				
-				try {
-					Key unwrappedBin = cipher.unwrap(sBin.getBytes(), "CAST128/ECB/PKCS5Padding", Cipher.SECRET_KEY);
+					Key unwrappedBin = cipher.unwrap(sBin.getBytes(), "DES", Cipher.SECRET_KEY);
 					out.println(getHex(unwrappedBin.getEncoded()));
 				} catch (Exception e) {
 					out.println(e.getMessage());
 				}
 				try {
-					Key unwrappedBin = cipher.unwrap(sBin.getBytes(), "RC2/ECB/NoPadding", Cipher.SECRET_KEY);
+					Key unwrappedBin = cipher.unwrap(sBin.getBytes(), "DESede", Cipher.SECRET_KEY);
 					out.println(getHex(unwrappedBin.getEncoded()));
 				} catch (Exception e) {
 					out.println(e.getMessage());
 				}
-				
 				try {
-					Key unwrappedBin = cipher.unwrap(sBin.getBytes(), "RC2/ECB/PKCS5Padding", Cipher.SECRET_KEY);
+					Key unwrappedBin = cipher.unwrap(sBin.getBytes(), "IDEA", Cipher.SECRET_KEY);
 					out.println(getHex(unwrappedBin.getEncoded()));
 				} catch (Exception e) {
 					out.println(e.getMessage());
 				}
+				try {
+					Key unwrappedBin = cipher.unwrap(sBin.getBytes(), "CAST128", Cipher.SECRET_KEY);
+					out.println(getHex(unwrappedBin.getEncoded()));
+				} catch (Exception e) {
+					out.println(e.getMessage());
+				}
+				try {
+					Key unwrappedBin = cipher.unwrap(sBin.getBytes(), "RC2", Cipher.SECRET_KEY);
+					out.println(getHex(unwrappedBin.getEncoded()));
+				} catch (Exception e) {
+					out.println(e.getMessage());
+				}		
 				try {
 					Key unwrappedBin = cipher.unwrap(sBin.getBytes(), "RC4", Cipher.SECRET_KEY);
 					out.println(getHex(unwrappedBin.getEncoded()));
