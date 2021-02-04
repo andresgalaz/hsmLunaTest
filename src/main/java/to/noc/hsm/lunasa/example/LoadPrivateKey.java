@@ -110,7 +110,7 @@ public class LoadPrivateKey {
 		try {
 			cipher.init(Cipher.UNWRAP_MODE, wmk);
 		} catch (Exception e) {
-			out.println("Requiere algotirmo");
+			out.println("Requiere algotirmo." + e.getMessage());
 			cipher.init(Cipher.UNWRAP_MODE, wmk, algParams);
 		}
 		// cipher.init(Cipher.DECRYPT_MODE, wmk, algParams);
