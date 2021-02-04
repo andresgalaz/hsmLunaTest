@@ -108,7 +108,8 @@ public class LoadPrivateKey {
 		AlgorithmParameters algParams = AlgorithmParameters.getInstance("IV", "LunaProvider");
 		algParams.init(new IvParameterSpec(new byte[16]));
 		try {
-			cipher.init(Cipher.UNWRAP_MODE, wmk);
+			cipher.init(Cipher.UNWRAP_MODE, wmk, algParams);
+//			cipher.init(Cipher.UNWRAP_MODE, wmk);
 		} catch (Exception e) {
 			out.println("Requiere algotirmo." + e.getMessage());
 			cipher.init(Cipher.UNWRAP_MODE, wmk, algParams);
