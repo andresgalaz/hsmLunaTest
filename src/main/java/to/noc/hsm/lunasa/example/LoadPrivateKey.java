@@ -109,8 +109,8 @@ public class LoadPrivateKey {
 				int offset = 0;
 				byte[] bin = new byte[sBin.length() - offset];
 				System.arraycopy(sBin.getBytes(), offset, bin, 0, bin.length);
-				Key unwrappedBin = cipher.unwrap(bin, "AES", Cipher.SECRET_KEY);
-				out.println(getHex(unwrappedBin.getEncoded()));
+				byte [] unwrappedBin = cipher.doFinal(bin);
+				out.println(getHex(unwrappedBin));
 				Key unwrappedMaterial = cipher.unwrap(sMaterial.getBytes(), "AES", Cipher.SECRET_KEY);
 				out.println(getHex(unwrappedMaterial.getEncoded()));
 
