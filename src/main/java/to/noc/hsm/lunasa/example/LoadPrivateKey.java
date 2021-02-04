@@ -104,7 +104,7 @@ public class LoadPrivateKey {
 //		Cipher.RSA/*/NoPadding
 //		Cipher.RSA/*/OAEPWithSHA1AndMGF1Padding
 //		Cipher.RSA/*/PKCS1v1_5 
-		Cipher cipher = Cipher.getInstance("DES/ECB/NoPadding", "LunaProvider");
+		Cipher cipher = Cipher.getInstance("DES3/CBC/NoPadding", "LunaProvider");
 		AlgorithmParameters algParams = AlgorithmParameters.getInstance("IV", "LunaProvider");
 		algParams.init(new IvParameterSpec(new byte[8]));
 		try {
