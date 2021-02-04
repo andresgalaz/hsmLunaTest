@@ -75,7 +75,7 @@ public class LoadPrivateKey {
 	private static void procesa(Connection con, SecretKey wmk) throws Exception {
 		out.println("\nMaster KEY");
 		out.println(wmk);
-		
+
 //		Cipher.AES/CBC/PKCS5Padding
 //		Cipher.AES/CBC/NoPadding
 //		Cipher.AES/ECB/NoPadding
@@ -107,14 +107,11 @@ public class LoadPrivateKey {
 		Cipher cipher = Cipher.getInstance("PBEWithSHA1AndDESede/CBC/PKCS5Padding", "LunaProvider");
 		AlgorithmParameters algParams = AlgorithmParameters.getInstance("IV", "LunaProvider");
 		algParams.init(new IvParameterSpec(new byte[16]));
-		try {
-			cipher.init(Cipher.UNWRAP_MODE, wmk, algParams);
-//			cipher.init(Cipher.UNWRAP_MODE, wmk);
-		} catch (Exception e) {
-			out.println("Requiere algotirmo." + e.getMessage());
-			cipher.init(Cipher.UNWRAP_MODE, wmk, algParams);
-		}
-		// cipher.init(Cipher.DECRYPT_MODE, wmk, algParams);
+
+//		cipher.init(Cipher.UNWRAP_MODE, wmk, algParams);
+		cipher.init(Cipher.UNWRAP_MODE, wmk, new IvParameterSpec(new byte[16]));
+//		cipher.init(Cipher.UNWRAP_MODE, wmk);
+
 
 		String cSql = "SELECT id, lo_get(bin) bin, lo_get(material) material \n" //
 				+ " FROM  public.luna_key \n" //
@@ -147,7 +144,7 @@ public class LoadPrivateKey {
 //				byte[] bin = new byte[sBin.length() - offset];
 //				System.arraycopy(sBin.getBytes(), offset, bin, 0, bin.length);
 //				bin = Base64.decode(sBin.substring(offset));
-				
+
 				try {
 					Key unwrappedBin = cipher.unwrap(sBin.getBytes(), "RSA", Cipher.SECRET_KEY);
 					out.println(getHex(unwrappedBin.getEncoded()));
