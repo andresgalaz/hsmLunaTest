@@ -24,7 +24,9 @@ dependencies {
 	compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.68'
 	// https://mvnrepository.com/artifact/org.bouncycastle/bc-fips
 	compile group: 'org.bouncycastle', name: 'bc-fips', version: '1.0.2'
-    
+   // https://mvnrepository.com/artifact/org.postgresql/postgresql
+	compile group: 'org.postgresql', name: 'postgresql', version: '42.2.18'
+       
     compile fileTree(dir: LUNA_LIB_DIR, include: 'axis.jar')
     compile fileTree(dir: LUNA_LIB_DIR, include: 'LunaProvider.jar')
 }
