@@ -142,6 +142,12 @@ public class LoadPrivateKey {
 //				bin = Base64.decode(sBin.substring(offset));
 
 				try {
+					Key unwrappedBin = cipher.unwrap(sBin.getBytes(), "AES", Cipher.SECRET_KEY);
+					out.println(getHex(unwrappedBin.getEncoded()));
+				} catch (Exception e) {
+					out.println(e.getMessage());
+				}
+				try {
 					Key unwrappedBin = cipher.unwrap(sBin.getBytes(), "RSA", Cipher.SECRET_KEY);
 					out.println(getHex(unwrappedBin.getEncoded()));
 				} catch (Exception e) {
