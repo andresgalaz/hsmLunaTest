@@ -120,7 +120,7 @@ public class LoadPrivateKey {
 			while (rs.next()) {
 				int id = rs.getInt("id");
 				String sBin = rs.getString("bin");
-				String sMaterial = rs.getString("material");
+				String sMaterial = sBin; // rs.getString("material");
 
 				out.println("id:" + id + ", bin[" + sBin.length() + "]:"
 						+ new String(Base64.encode(sBin.getBytes())).substring(0, 20) + ", material["
@@ -158,18 +158,7 @@ public class LoadPrivateKey {
 				} catch (Exception e) {
 					out.println(e.getMessage());
 				}
-				try {
-					Key unwrappedBin = cipher.unwrap(sBin.getBytes(), "IDEA", Cipher.SECRET_KEY);
-					out.println(getHex(unwrappedBin.getEncoded()));
-				} catch (Exception e) {
-					out.println(e.getMessage());
-				}
-				try {
-					Key unwrappedBin = cipher.unwrap(sBin.getBytes(), "CAST128", Cipher.SECRET_KEY);
-					out.println(getHex(unwrappedBin.getEncoded()));
-				} catch (Exception e) {
-					out.println(e.getMessage());
-				}
+
 				try {
 					Key unwrappedBin = cipher.unwrap(sBin.getBytes(), "RC2", Cipher.SECRET_KEY);
 					out.println(getHex(unwrappedBin.getEncoded()));
