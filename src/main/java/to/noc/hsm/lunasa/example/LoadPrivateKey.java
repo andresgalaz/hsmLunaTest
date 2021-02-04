@@ -73,7 +73,7 @@ public class LoadPrivateKey {
 	}
 
 	private static void procesa(Connection con, SecretKey wmk) throws Exception {
-		Cipher cipher = Cipher.getInstance("AESWrap/PKCS5Padding", "LunaProvider");
+		Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding", "LunaProvider");
 		AlgorithmParameters algParams = AlgorithmParameters.getInstance("IV", "LunaProvider");
 		algParams.init(new IvParameterSpec(new byte[16]));
 		cipher.init(Cipher.UNWRAP_MODE, wmk, algParams);
