@@ -104,9 +104,13 @@ public class LoadPrivateKey {
 		Cipher cipher = Cipher.getInstance("DES/CBC/NoPadding", "LunaProvider");
 		AlgorithmParameters algParams = AlgorithmParameters.getInstance("IV", "LunaProvider");
 		algParams.init(new IvParameterSpec(new byte[16]));
-		// cipher.init(Cipher.UNWRAP_MODE, wmk, algParams);
+		try {
+			cipher.init(Cipher.UNWRAP_MODE, wmk);
+		} catch (Exception e) {
+			out.println("Requiere algotirmo");
+			cipher.init(Cipher.UNWRAP_MODE, wmk, algParams);
+		}
 		// cipher.init(Cipher.DECRYPT_MODE, wmk, algParams);
-		cipher.init(Cipher.UNWRAP_MODE, wmk);
 
 		String cSql = "SELECT id, lo_get(bin) bin, lo_get(material) material \n" //
 				+ " FROM  public.luna_key \n" //
