@@ -106,7 +106,7 @@ public class LoadPrivateKey {
 //							+ getHex(bin));
 //				}
 
-				int offset = 3;
+				int offset = 4;
 				byte[] bin = new byte[sBin.length() - offset];
 				System.arraycopy(sBin.getBytes(), offset, bin, 0, bin.length);
 				byte [] unwrappedBin = cipher.doFinal(bin);
