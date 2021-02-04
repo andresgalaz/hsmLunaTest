@@ -103,7 +103,7 @@ public class LoadPrivateKey {
 //		Cipher.RSA/*/PKCS1v1_5 
 		Cipher cipher = Cipher.getInstance("DES/CBC/NoPadding", "LunaProvider");
 		AlgorithmParameters algParams = AlgorithmParameters.getInstance("IV", "LunaProvider");
-		algParams.init(new IvParameterSpec(new byte[16]));
+		algParams.init(new IvParameterSpec(new byte[8]));
 		try {
 			cipher.init(Cipher.UNWRAP_MODE, wmk);
 		} catch (Exception e) {
