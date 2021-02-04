@@ -22,6 +22,7 @@ import javax.crypto.spec.IvParameterSpec;
 import org.apache.axis.encoding.Base64;
 
 import com.safenetinc.luna.LunaUtils;
+import com.safenetinc.luna.provider.cipher.LunaCipher;
 
 public class LoadPrivateKey {
 	private static final String KEK_ALIAS = "MSP_WK";
@@ -100,12 +101,12 @@ public class LoadPrivateKey {
 //		Cipher.RSA/*/NoPadding
 //		Cipher.RSA/*/OAEPWithSHA1AndMGF1Padding
 //		Cipher.RSA/*/PKCS1v1_5 
-		Cipher cipher = Cipher.getInstance("DES/CBC/NoPadding", "LunaProvider");
+		Cipher cipher = Cipher.getInstance("AES/CBC/NoPadding", "LunaProvider");
 		AlgorithmParameters algParams = AlgorithmParameters.getInstance("IV", "LunaProvider");
 		algParams.init(new IvParameterSpec(new byte[16]));
 
-//		cipher.init(Cipher.UNWRAP_MODE, wmk, algParams);
-		cipher.init(Cipher.UNWRAP_MODE, wmk, new IvParameterSpec(new byte[16]));
+		cipher.init(Cipher.UNWRAP_MODE, wmk, algParams);
+//		cipher.init(Cipher.UNWRAP_MODE, wmk, new IvParameterSpec(new byte[16]));
 //		cipher.init(Cipher.UNWRAP_MODE, wmk);
 
 		String cSql = "SELECT id, lo_get(bin) bin, lo_get(material) material \n" //
