@@ -73,6 +73,9 @@ public class LoadPrivateKey {
 	}
 
 	private static void procesa(Connection con, SecretKey wmk) throws Exception {
+		out.println("\nMaster KEY");
+		out.println(wmk);
+		
 //		Cipher.AES/CBC/PKCS5Padding
 //		Cipher.AES/CBC/NoPadding
 //		Cipher.AES/ECB/NoPadding
