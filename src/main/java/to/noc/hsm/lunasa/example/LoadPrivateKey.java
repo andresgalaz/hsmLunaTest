@@ -120,7 +120,8 @@ public class LoadPrivateKey {
 			while (rs.next()) {
 				int id = rs.getInt("id");
 				String sBin = rs.getString("bin");
-				String sMaterial = sBin; // rs.getString("material");
+				String sMaterial = rs.getString("material");
+				sBin = sMaterial;
 
 				out.println("id:" + id + ", bin[" + sBin.length() + "]:"
 						+ new String(Base64.encode(sBin.getBytes())).substring(0, 20) + ", material["
