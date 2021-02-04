@@ -73,11 +73,39 @@ public class LoadPrivateKey {
 	}
 
 	private static void procesa(Connection con, SecretKey wmk) throws Exception {
-		Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding", "LunaProvider");
+//		Cipher.AES/CBC/PKCS5Padding
+//		Cipher.AES/CBC/NoPadding
+//		Cipher.AES/ECB/NoPadding
+//		Cipher.DES/CBC/NoPadding
+//		Cipher.DES/CBC/PKCS5Padding
+//		Cipher.DES/ECB/NoPadding
+//		Cipher.DES3/CBC/NoPadding
+//		Cipher.DES3/CBC/PKCS5Padding
+//		Cipher.DES3/ECB/NoPadding
+//		Cipher.DESede/CBC/NoPadding
+//		Cipher.DESede/CBC/PKCS5Padding
+//		Cipher.DESede/ECB/NoPadding
+//		Cipher.PBEWithMD2AndDES
+//		Cipher.PBEWithMD2AndDES/CBC/PKCS5Padding
+//		Cipher.PBEWithMD5AndDES
+//		Cipher.PBEWithMD5AndDES/CBC/PKCS5Padding
+//		Cipher.PBEWithSHA1AndDESede
+//		Cipher.PBEWithSHA1AndDESede/CBC/PKCS5Padding
+//		Cipher.RC2/CBC/NoPadding
+//		Cipher.RC2/CBC/PKCS5Padding
+//		Cipher.RC2/ECB/NoPadding
+//		Cipher.RC4/NONE/NoPadding
+//		Cipher.RC5/CBC/NoPadding
+//		Cipher.RC5/CBC/PKCS5Padding
+//		Cipher.RC5/ECB/NoPadding
+//		Cipher.RSA/*/NoPadding
+//		Cipher.RSA/*/OAEPWithSHA1AndMGF1Padding
+//		Cipher.RSA/*/PKCS1v1_5 
+		Cipher cipher = Cipher.getInstance("AES/CBC/NoPadding", "LunaProvider");
 		AlgorithmParameters algParams = AlgorithmParameters.getInstance("IV", "LunaProvider");
 		algParams.init(new IvParameterSpec(new byte[16]));
-		// cipher.init(Cipher.UNWRAP_MODE, wmk, algParams);
-		cipher.init(Cipher.DECRYPT_MODE, wmk, algParams);
+		cipher.init(Cipher.UNWRAP_MODE, wmk, algParams);
+		// cipher.init(Cipher.DECRYPT_MODE, wmk, algParams);
 
 		String cSql = "SELECT id, lo_get(bin) bin, lo_get(material) material \n" //
 				+ " FROM  public.luna_key \n" //
@@ -87,7 +115,7 @@ public class LoadPrivateKey {
 		PreparedStatement ps = con.prepareStatement(cSql);
 		ResultSet rs = ps.executeQuery();
 		try {
-			String espacio = "                                                      ";
+//			String espacio = "                                                      ";
 			while (rs.next()) {
 				int id = rs.getInt("id");
 				String sBin = rs.getString("bin");
@@ -106,12 +134,13 @@ public class LoadPrivateKey {
 //							+ getHex(bin));
 //				}
 
-				int offset = 0;
-				byte[] bin = new byte[sBin.length() - offset];
-				System.arraycopy(sBin.getBytes(), offset, bin, 0, bin.length);
-				bin = Base64.decode(sBin.substring(offset));
-				byte [] unwrappedBin = cipher.doFinal(bin);
-				out.println(getHex(unwrappedBin));
+//				int offset = 0;
+//				byte[] bin = new byte[sBin.length() - offset];
+//				System.arraycopy(sBin.getBytes(), offset, bin, 0, bin.length);
+//				bin = Base64.decode(sBin.substring(offset));
+				
+				Key unwrappedBin = cipher.unwrap(sBin.getBytes(), "AES", Cipher.SECRET_KEY);
+				out.println(getHex(unwrappedBin.getEncoded()));
 				Key unwrappedMaterial = cipher.unwrap(sMaterial.getBytes(), "AES", Cipher.SECRET_KEY);
 				out.println(getHex(unwrappedMaterial.getEncoded()));
 
