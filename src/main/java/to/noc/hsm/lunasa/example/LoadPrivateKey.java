@@ -76,7 +76,8 @@ public class LoadPrivateKey {
 		Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding", "LunaProvider");
 		AlgorithmParameters algParams = AlgorithmParameters.getInstance("IV", "LunaProvider");
 		algParams.init(new IvParameterSpec(new byte[16]));
-		cipher.init(Cipher.UNWRAP_MODE, wmk, algParams);
+		// cipher.init(Cipher.UNWRAP_MODE, wmk, algParams);
+		cipher.init(Cipher.DECRYPT_MODE, wmk, algParams);
 
 		String cSql = "SELECT id, lo_get(bin) bin, lo_get(material) material \n" //
 				+ " FROM  public.luna_key \n" //
@@ -105,7 +106,7 @@ public class LoadPrivateKey {
 //							+ getHex(bin));
 //				}
 
-				int offset = 1;
+				int offset = 0;
 				byte[] bin = new byte[sBin.length() - offset];
 				System.arraycopy(sBin.getBytes(), offset, bin, 0, bin.length);
 				Key unwrappedBin = cipher.unwrap(bin, "AES", Cipher.SECRET_KEY);
