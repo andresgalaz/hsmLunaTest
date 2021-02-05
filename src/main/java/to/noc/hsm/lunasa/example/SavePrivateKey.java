@@ -31,7 +31,8 @@ public class SavePrivateKey {
 	private Certificate certificate;
 	private PrivateKey privateKey;
 	private String alias;
-	private static final String KEK_ALIAS = "KEK_AGV";
+	private static final String KEK_ALIAS = "MSP_WK_256";
+
 
 	public static void main(String[] args) throws Exception {
 		
