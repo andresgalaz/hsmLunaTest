@@ -18,10 +18,14 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPrivateKey;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Enumeration;
 
 import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
 import javax.crypto.spec.IvParameterSpec;
 
 import com.safenetinc.luna.LunaUtils;
@@ -31,15 +35,21 @@ import com.safenetinc.luna.provider.key.LunaSecretKey;
 public class WrapPrivateKey {
 	private Certificate certificate;
 	private PrivateKey privateKey;
-	private String alias;
-	// private static final byte[] FIXED_128BIT_IV_FOR_TESTS =
-	// LunaUtils.hexStringToByteArray("DEADD00D8BADF00DDEADBABED15EA5ED");
+	private String aliasCert;
+	private Integer idCert;
+
 	private static final String KEK_ALIAS = "MSP_WK_256";
 
+	private Connection con;
+	private String host = "10.77.40.53:5432";
+	private String nameDB = "firmador";
+	private String usuarioDB = "firmador";
+	private String passwdDB = "CeNtoNtu";
+
 	public static void main(String[] args) throws Exception {
-		if (args.length != 2) {
+		if (args.length != 1) {
 			out.println("\n==========================================================");
-			out.println("Se esperaban dos un parámetros: archivo y password");
+			out.println("Se esperaban un parámetro: id certificadp");
 			return;
 		}
 
@@ -50,7 +60,7 @@ public class WrapPrivateKey {
 		HsmManager.login();
 		HsmManager.setSecretKeysExtractable(true);
 		out.println("\n");
-		KeyGenerator kg = KeyGenerator.getInstance("AES", "LunaProvider");
+		// KeyGenerator kg = KeyGenerator.getInstance("AES", "LunaProvider");
 		// kg.init(128);
 
 		// LunaSecretKey wmkx = (LunaSecretKey) kg.generateKey();
@@ -60,31 +70,68 @@ public class WrapPrivateKey {
 		// out.println("wmkx:" + wmkx + ", length=" + wmkx.getEncoded().length*8);
 
 		WrapPrivateKey me = new WrapPrivateKey();
+		me.setIdCertificado(new Integer(args[0]));
+		// Conecta a la BD
+		me.con = DriverManager.getConnection("jdbc:postgresql://" + me.host + "/" + me.nameDB, me.usuarioDB,
+				me.passwdDB);
+
 		me.loadCertificado(args[0], args[1]);
-		out.println("alias:" + me.getAlias());
+		out.println("alias:" + me.getAliasCert());
+
+		me.getCertificado(me.con, me.getIdCertificado());
+
 		me.print(me.getPrivateKey());
 		out.println("Class of PrivateKey: " + me.getPrivateKey().getClass());
 
 		Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding", "LunaProvider");
 		AlgorithmParameters algParams = AlgorithmParameters.getInstance("IV", "LunaProvider");
 		algParams.init(new IvParameterSpec(new byte[16]));
-		cipher.init(Cipher.WRAP_MODE, wmk,algParams);
-		
+		cipher.init(Cipher.WRAP_MODE, wmk, algParams);
+
 		byte[] wrappedKey = cipher.wrap(me.getPrivateKey());
-		out.println(getHex(wrappedKey));
+		out.println("wrappedKey:"+wrappedKey.length);
 
+		byte[] certEncoded = me.getCertificate().getEncoded();
+		out.println("certEncoded :"+getHex(certEncoded));
 
-		byte [] certEncoded = me.getCertificate().getEncoded();
-		
-		CertificateFactory certFactory = CertificateFactory.getInstance("X.509");
-		InputStream in = new ByteArrayInputStream(certEncoded);
-		X509Certificate cert = (X509Certificate)certFactory.generateCertificate(in);
-		
-		out.println(cert);
-		out.println(me.getCertificate());
-		
-		
 		HsmManager.logout();
+	}
+
+	private boolean getCertificado(Connection con, int idCert) throws SQLException {
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			String cSql = "SELECT alias, certificado_base64, clave FROM certificados WHERE id=?";
+			ps = con.prepareStatement(cSql);
+			ps.setInt(1, idCert);
+			rs = ps.executeQuery();
+
+			if (!rs.next())
+				return false;
+			
+			setAliasCert(rs.getString(1));
+			String certB64 = rs.getString(2);
+			String clave = rs.getString(3);
+
+			InputStream in = new ByteArrayInputStream(certB64.getBytes());
+			KeyStore p12 = KeyStore.getInstance("pkcs12");
+			p12.load(in, clave.toCharArray());
+			in.close();
+
+			setPrivateKey((PrivateKey) p12.getKey(getAliasCert(), clave.toCharArray()));
+			setCertificate(p12.getCertificate(getAliasCert()));
+			return true;
+		} catch (SQLException e) {
+			throw e;
+		} catch (Exception e) {
+			out.print("error al leer certificado:" + idCert + "\n" + e.getMessage());
+			return false;
+		} finally {
+			if (rs != null)
+				rs.close();
+			if (ps != null)
+				ps.close();
+		}
 	}
 
 	private void loadCertificado(String filename, String clave) throws KeyStoreException, NoSuchAlgorithmException,
@@ -98,10 +145,10 @@ public class WrapPrivateKey {
 
 		Enumeration<String> e = p12.aliases();
 		while (e.hasMoreElements()) {
-			setAlias(e.nextElement());
+			setAliasCert(e.nextElement());
 		}
-		setPrivateKey((PrivateKey) p12.getKey(getAlias(), clave.toCharArray()));
-		setCertificate(p12.getCertificate(getAlias()));
+		setPrivateKey((PrivateKey) p12.getKey(getAliasCert(), clave.toCharArray()));
+		setCertificate(p12.getCertificate(getAliasCert()));
 	}
 
 	public void print(LunaPrivateKeyRsa k) {
@@ -137,12 +184,20 @@ public class WrapPrivateKey {
 		this.privateKey = privateKey;
 	}
 
-	public String getAlias() {
-		return alias;
+	public String getAliasCert() {
+		return aliasCert;
 	}
 
-	public void setAlias(String alias) {
-		this.alias = alias;
+	public void setAliasCert(String alias) {
+		this.aliasCert = alias;
+	}
+
+	public Integer getIdCertificado() {
+		return idCert;
+	}
+
+	public void setIdCertificado(Integer idCert) {
+		this.idCert = idCert;
 	}
 
 }
