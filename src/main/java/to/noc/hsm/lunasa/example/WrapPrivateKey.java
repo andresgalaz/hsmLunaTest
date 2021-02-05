@@ -1,12 +1,12 @@
 package to.noc.hsm.lunasa.example;
 
 import static java.lang.System.out;
+import static java.lang.System.err;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.security.AlgorithmParameters;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -45,9 +45,10 @@ public class WrapPrivateKey {
 	private String passwdDB = "desa"; // "CeNtoNtu";
 
 	public static void main(String[] args) throws Exception {
-		if (args.length != 1) {
+		if (args.length == 0) {
 			out.println("\n==========================================================");
-			out.println("Se esperaban un parámetro: id certificadp");
+			out.println("Se esperaban un parámetro: id_certificado");
+			out.println("Se esperaban o dos parámetros: archivo clave");
 			return;
 		}
 
@@ -68,15 +69,21 @@ public class WrapPrivateKey {
 		// out.println("wmkx:" + wmkx + ", length=" + wmkx.getEncoded().length*8);
 
 		WrapPrivateKey me = new WrapPrivateKey();
-		me.setIdCertificado(new Integer(args[0]));
 		// Conecta a la BD
 		me.con = DriverManager.getConnection("jdbc:postgresql://" + me.host + "/" + me.nameDB, me.usuarioDB,
 				me.passwdDB);
 
-		// me.loadCertificado(args[0], args[1]);
+		if (args.length == 1)
+			me.setIdCertificado(new Integer(args[0]));
+		else if (args.length == 2)
+			me.loadCertificado(args[0], args[1]);
+		else {
+			err.println("Error en parámetros");
+		}
 		// out.println("alias:" + me.getAliasCert());
 
-		me.loadCertificado(me.con, me.getIdCertificado());
+		if (!me.loadCertificado(me.con, me.getIdCertificado()))
+			return;
 
 		me.print(me.getPrivateKey());
 		out.println("Class of PrivateKey: " + me.getPrivateKey().getClass());
@@ -110,18 +117,23 @@ public class WrapPrivateKey {
 			Utilidades u = new Utilidades();
 
 			setAliasCert(rs.getString("alias"));
-			byte[] certB64 = u.base64Decode(rs.getString("certificado_base64"));
+			String certB64 = rs.getString("certificado_base64");
+			byte[] certContent = u.base64Decode(certB64);
 			String clave = u.desencriptar(rs.getString("clave"));
 
 			out.println(getAliasCert());
 			out.println(clave);
-			out.println(rs.getString("certificado_base64").length() + " - " + certB64.length);
+			out.println(certB64.length() + " - " + certContent.length);
 
-			KeyStore p12 = KeyStore.getInstance("pkcs12");
-			p12.load(new ByteArrayInputStream(certB64), clave.toCharArray());
+			try {
+				KeyStore p12 = KeyStore.getInstance("pkcs12");
+				p12.load(new ByteArrayInputStream(certContent), clave.toCharArray());
+				setPrivateKey((PrivateKey) p12.getKey(getAliasCert(), clave.toCharArray()));
+				setCertificate(p12.getCertificate(getAliasCert()));
+			} catch (Exception e) {
+				return false;
+			}
 
-			setPrivateKey((PrivateKey) p12.getKey(getAliasCert(), clave.toCharArray()));
-			setCertificate(p12.getCertificate(getAliasCert()));
 			return true;
 		} catch (SQLException e) {
 			throw e;
@@ -136,7 +148,6 @@ public class WrapPrivateKey {
 		}
 	}
 
-	@SuppressWarnings("unused")
 	private void loadCertificado(String filename, String clave) throws KeyStoreException, NoSuchAlgorithmException,
 			CertificateException, IOException, UnrecoverableKeyException {
 		File f = new File(filename);
