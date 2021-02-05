@@ -101,7 +101,7 @@ public class WrapPrivateKey {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			String cSql = "SELECT alias, certificado_base64, clave FROM certificados WHERE id=?";
+			String cSql = "SELECT alias, certificado_base64, clave FROM certificado WHERE id=?";
 			ps = con.prepareStatement(cSql);
 			ps.setInt(1, idCert);
 			rs = ps.executeQuery();
