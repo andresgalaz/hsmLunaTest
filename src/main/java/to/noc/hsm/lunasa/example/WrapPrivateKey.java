@@ -117,10 +117,8 @@ public class WrapPrivateKey {
 			out.println(clave);
 			out.println(rs.getString("certificado_base64").length() + " - " + certB64.length);
 
-			InputStream in = new ByteArrayInputStream(certB64);
 			KeyStore p12 = KeyStore.getInstance("pkcs12");
-			p12.load(in, clave.toCharArray());
-			in.close();
+			p12.load(new ByteArrayInputStream(certB64), clave.toCharArray());
 
 			setPrivateKey((PrivateKey) p12.getKey(getAliasCert(), clave.toCharArray()));
 			setCertificate(p12.getCertificate(getAliasCert()));
