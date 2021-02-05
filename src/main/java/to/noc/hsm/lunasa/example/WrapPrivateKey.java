@@ -95,7 +95,7 @@ public class WrapPrivateKey {
 		HsmManager.logout();
 	}
 
-	private boolean loadCertificado(Connection con, int idCert) throws SQLException {
+	private boolean loadCertificado(Connection con, int idCert) throws Exception {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
@@ -125,7 +125,7 @@ public class WrapPrivateKey {
 			throw e;
 		} catch (Exception e) {
 			out.print("error al leer certificado:" + idCert + "\n" + e.getMessage());
-			return false;
+			throw e;
 		} finally {
 			if (rs != null)
 				rs.close();
