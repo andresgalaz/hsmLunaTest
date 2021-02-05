@@ -15,8 +15,6 @@ import java.security.PrivateKey;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPrivateKey;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -109,9 +107,11 @@ public class WrapPrivateKey {
 			if (!rs.next())
 				return false;
 			
+			Utilidades u = new Utilidades();
+			
 			setAliasCert(rs.getString(1));
 			String certB64 = rs.getString(2);
-			String clave = rs.getString(3);
+			String clave = u.desencriptar(rs.getString(3));
 
 			InputStream in = new ByteArrayInputStream(certB64.getBytes());
 			KeyStore p12 = KeyStore.getInstance("pkcs12");
@@ -134,6 +134,7 @@ public class WrapPrivateKey {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private void loadCertificado(String filename, String clave) throws KeyStoreException, NoSuchAlgorithmException,
 			CertificateException, IOException, UnrecoverableKeyException {
 		File f = new File(filename);
