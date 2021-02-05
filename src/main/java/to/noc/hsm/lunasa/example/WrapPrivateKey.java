@@ -75,10 +75,10 @@ public class WrapPrivateKey {
 		me.con = DriverManager.getConnection("jdbc:postgresql://" + me.host + "/" + me.nameDB, me.usuarioDB,
 				me.passwdDB);
 
-		me.loadCertificado(args[0], args[1]);
-		out.println("alias:" + me.getAliasCert());
+		// me.loadCertificado(args[0], args[1]);
+		// out.println("alias:" + me.getAliasCert());
 
-		me.getCertificado(me.con, me.getIdCertificado());
+		me.loadCertificado(me.con, me.getIdCertificado());
 
 		me.print(me.getPrivateKey());
 		out.println("Class of PrivateKey: " + me.getPrivateKey().getClass());
@@ -97,7 +97,7 @@ public class WrapPrivateKey {
 		HsmManager.logout();
 	}
 
-	private boolean getCertificado(Connection con, int idCert) throws SQLException {
+	private boolean loadCertificado(Connection con, int idCert) throws SQLException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
