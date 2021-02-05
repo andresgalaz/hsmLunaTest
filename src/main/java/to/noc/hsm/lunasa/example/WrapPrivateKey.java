@@ -44,7 +44,7 @@ public class WrapPrivateKey {
 	private String host = "10.77.40.53:5432";
 	private String nameDB = "firmador";
 	private String usuarioDB = "firmador";
-	private String passwdDB = "CeNtoNtu";
+	private String passwdDB = "desa"; // "CeNtoNtu";
 
 	public static void main(String[] args) throws Exception {
 		if (args.length != 1) {
