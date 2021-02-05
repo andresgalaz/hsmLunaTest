@@ -2,11 +2,12 @@ package to.noc.hsm.lunasa.example;
 
 import static java.lang.System.out;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.security.Key;
-import java.security.KeyFactory;
+import java.io.InputStream;
+import java.security.AlgorithmParameters;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -14,13 +15,14 @@ import java.security.PrivateKey;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPrivateKey;
-import java.security.spec.RSAPrivateKeySpec;
 import java.util.Enumeration;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
 
 import com.safenetinc.luna.LunaUtils;
 import com.safenetinc.luna.provider.key.LunaPrivateKeyRsa;
@@ -32,7 +34,7 @@ public class WrapPrivateKey {
 	private String alias;
 	// private static final byte[] FIXED_128BIT_IV_FOR_TESTS =
 	// LunaUtils.hexStringToByteArray("DEADD00D8BADF00DDEADBABED15EA5ED");
-	private static final String KEK_ALIAS = "MSP_WK";
+	private static final String KEK_ALIAS = "MSP_WK_256";
 
 	public static void main(String[] args) throws Exception {
 		if (args.length != 2) {
@@ -49,13 +51,13 @@ public class WrapPrivateKey {
 		HsmManager.setSecretKeysExtractable(true);
 		out.println("\n");
 		KeyGenerator kg = KeyGenerator.getInstance("AES", "LunaProvider");
-		kg.init(128);
+		// kg.init(128);
 
-		LunaSecretKey wmkx = (LunaSecretKey) kg.generateKey();		
-		LunaSecretKey wmk = (LunaSecretKey ) HsmManager.getSavedKey(KEK_ALIAS);
-		
-		out.println("wmk:" + wmk + ", length=" + wmk.getEncoded().length*8);
-		out.println("wmkx:" + wmkx + ", length=" + wmkx.getEncoded().length*8);
+		// LunaSecretKey wmkx = (LunaSecretKey) kg.generateKey();
+		LunaSecretKey wmk = (LunaSecretKey) HsmManager.getSavedKey(KEK_ALIAS);
+
+		out.println("wmk:" + wmk + ", length=" + wmk.getEncoded().length * 8);
+		// out.println("wmkx:" + wmkx + ", length=" + wmkx.getEncoded().length*8);
 
 		WrapPrivateKey me = new WrapPrivateKey();
 		me.loadCertificado(args[0], args[1]);
@@ -64,54 +66,24 @@ public class WrapPrivateKey {
 		out.println("Class of PrivateKey: " + me.getPrivateKey().getClass());
 
 		Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding", "LunaProvider");
-		// Cipher cipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA-256ANDMGF1Padding",
-		// "LunaProvider");
-		// Cipher cipher = Cipher.getInstance("RSA/ECB/NoPadding", "BC");
-		// Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding", "BC");
-		// cipher.init(Cipher.WRAP_MODE, wmk);
-		// AlgorithmParameters algParams = AlgorithmParameters.getInstance("IV",
-		// "LunaProvider");
-		// algParams.init(new IvParameterSpec(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		// 0, 0, 0, 0, 0, 0 }));
-		cipher.init(Cipher.WRAP_MODE, wmk);
-		// , new IvParameterSpec(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		// 0, 0 }));
+		AlgorithmParameters algParams = AlgorithmParameters.getInstance("IV", "LunaProvider");
+		algParams.init(new IvParameterSpec(new byte[16]));
+		cipher.init(Cipher.WRAP_MODE, wmk,algParams);
+		
+		byte[] wrappedKey = cipher.wrap(me.getPrivateKey());
+		out.println(getHex(wrappedKey));
 
-		RSAPrivateKey k = (RSAPrivateKey) me.getPrivateKey();
-		PrivateKey rsaPrivateKey = null;
-		{
-			KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-			RSAPrivateKeySpec rsaPrivateKeySpec = new RSAPrivateKeySpec(k.getModulus(), k.getPrivateExponent());
-			rsaPrivateKey = keyFactory.generatePrivate(rsaPrivateKeySpec);
-		}
 
-		out.println("===========================================");
-		try {
-			out.println(k.getEncoded().length);
-			byte[] b1 = cipher.wrap(k);
-			out.println(getHex(b1));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		out.println("===========================================");
-		try {
-			out.println(rsaPrivateKey.getEncoded().length);
-			byte[] b1 = cipher.wrap(rsaPrivateKey);
-			out.println(getHex(b1));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		out.println("===========================================");
-		try {
-			out.println(me.getPrivateKey().getEncoded().length);
-			byte[] b1 = cipher.wrap(me.getPrivateKey());
-			out.println(getHex(b1));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
+		byte [] certEncoded = me.getCertificate().getEncoded();
+		
+		CertificateFactory certFactory = CertificateFactory.getInstance("X.509");
+		InputStream in = new ByteArrayInputStream(certEncoded);
+		X509Certificate cert = (X509Certificate)certFactory.generateCertificate(in);
+		
+		out.println(cert);
+		out.println(me.getCertificate());
+		
+		
 		HsmManager.logout();
 	}
 
