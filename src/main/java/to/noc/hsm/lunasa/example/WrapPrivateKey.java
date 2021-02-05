@@ -87,10 +87,10 @@ public class WrapPrivateKey {
 		cipher.init(Cipher.WRAP_MODE, wmk, algParams);
 
 		byte[] wrappedKey = cipher.wrap(me.getPrivateKey());
-		out.println("wrappedKey:"+wrappedKey.length);
+		out.println("wrappedKey:" + wrappedKey.length);
 
 		byte[] certEncoded = me.getCertificate().getEncoded();
-		out.println("certEncoded :"+getHex(certEncoded));
+		out.println("certEncoded :" + getHex(certEncoded));
 
 		HsmManager.logout();
 	}
@@ -106,12 +106,16 @@ public class WrapPrivateKey {
 
 			if (!rs.next())
 				return false;
-			
+
 			Utilidades u = new Utilidades();
-			
-			setAliasCert(rs.getString(1));
-			byte[] certB64 = u.base64Decode(rs.getString(2));
-			String clave = u.desencriptar(rs.getString(3));
+
+			setAliasCert(rs.getString("alias"));
+			byte[] certB64 = u.base64Decode(rs.getString("certificado_base64"));
+			String clave = u.desencriptar(rs.getString("clave"));
+
+			out.println(getAliasCert());
+			out.println(clave);
+			out.println(rs.getString("certificado_base64").length() + " - " + certB64.length);
 
 			InputStream in = new ByteArrayInputStream(certB64);
 			KeyStore p12 = KeyStore.getInstance("pkcs12");
