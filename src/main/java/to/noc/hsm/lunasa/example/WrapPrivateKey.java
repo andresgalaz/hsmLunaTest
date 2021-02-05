@@ -110,10 +110,10 @@ public class WrapPrivateKey {
 			Utilidades u = new Utilidades();
 			
 			setAliasCert(rs.getString(1));
-			String certB64 = rs.getString(2);
+			byte[] certB64 = u.base64Decode(rs.getString(2));
 			String clave = u.desencriptar(rs.getString(3));
 
-			InputStream in = new ByteArrayInputStream(certB64.getBytes());
+			InputStream in = new ByteArrayInputStream(certB64);
 			KeyStore p12 = KeyStore.getInstance("pkcs12");
 			p12.load(in, clave.toCharArray());
 			in.close();
