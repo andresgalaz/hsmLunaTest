@@ -103,8 +103,9 @@ public class WrapPrivateKey {
 			if (!rs.next())
 				return false;
 
-			byte[] wrpKey = u.base64Decode(rs.getString("llave_privada"));
-			if (wrpKey != null) {
+			String llave_privada = rs.getString("llave_privada");
+			if (llave_privada != null && llave_privada.length() > 0) {
+				byte[] wrpKey = u.base64Decode(llave_privada);
 				out.println(getHex(wrpKey));
 
 				Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding", "LunaProvider");
