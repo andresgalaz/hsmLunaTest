@@ -74,7 +74,7 @@ public class WrapPrivateKey {
 
 		me.setIdCertificado(new Integer(args[0]));
 		if (!me.loadCertificado(me.con, me.getIdCertificado()))
-			me.loadCertificado(args[0], args[1]);
+			me.loadCertificado(args[1], args[2]);
 
 		me.print(me.getPrivateKey());
 		out.println("Class of PrivateKey: " + me.getPrivateKey().getClass());
