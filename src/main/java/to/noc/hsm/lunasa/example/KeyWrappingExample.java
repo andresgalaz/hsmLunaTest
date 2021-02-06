@@ -72,7 +72,7 @@ public class KeyWrappingExample {
 		final String hostKeyType = "DESede";
 
 		HsmManager.login();
-		HsmManager.setSecretKeysExtractable(false);
+		HsmManager.setSecretKeysExtractable(true);
 
 		SecretKey kek = createNewHsmKek();
 		out.println("HSM KEK ID (a handle, not in clear):\n\t" + getHex(kek.getEncoded()));
@@ -86,15 +86,15 @@ public class KeyWrappingExample {
 		out.println("\nStopping and starting session with HSM.");
 		HsmManager.logout();
 		out.println("Pretend that the host key was stored and restored from a database while disconnected\n");
-// kek = null;
-// des3Key = null;
+		kek = null;
+		des3Key = null;
 		HsmManager.login();
 
 		kek = getExistingHsmKek();
 		SecretKey unwrapped3DesKey = unwrapKeyWithKek(kek, hostKeyType, wrappedHostKey);
-		
+
 		unwrapped3DesKey = des3Key;
-		
+
 		out.println("Unwrapped 3DES key is same as original (in clear):\n\t" + getHex(unwrapped3DesKey.getEncoded()));
 		out.println("Class of unwrapped key: " + unwrapped3DesKey.getClass().getCanonicalName());
 

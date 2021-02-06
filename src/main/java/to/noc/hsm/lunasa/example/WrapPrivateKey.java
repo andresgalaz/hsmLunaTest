@@ -77,7 +77,7 @@ public class WrapPrivateKey {
 			me.loadCertificado(args[1], args[2]);
 
 		me.print(me.getPrivateKey());
-		out.println("Class of PrivateKey: " + me.getPrivateKey().getClass());
+		// out.println("Class of PrivateKey: " + me.getPrivateKey().getClass());
 
 		Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding", "LunaProvider");
 		AlgorithmParameters algParams = AlgorithmParameters.getInstance("IV", "LunaProvider");
@@ -106,6 +106,8 @@ public class WrapPrivateKey {
 
 			byte [] wrpKey = rs.getBytes("llave_privada");
 			if(wrpKey!=null) {
+				out.println(getHex(wrpKey));
+				
 				Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding", "LunaProvider");
 				AlgorithmParameters algParams = AlgorithmParameters.getInstance("IV", "LunaProvider");
 				algParams.init(new IvParameterSpec(new byte[16]));
@@ -168,6 +170,8 @@ public class WrapPrivateKey {
 	}
 
 	private boolean savePrivateKeyWrapped(byte[] wrpKey) throws Exception {
+		out.println(getHex(wrpKey));
+		
 		PreparedStatement ps = null;
 		try {
 			String cSql = "UPDATE certificado SET llave_privada=? WHERE id=?";
