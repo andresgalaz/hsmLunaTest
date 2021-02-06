@@ -121,13 +121,13 @@ public class LoadPrivateKey {
 //			String espacio = "                                                      ";
 			while (rs.next()) {
 				int id = rs.getInt("id");
-				byte [] sBin = u.base64Decode(rs.getString("bin"));
-				byte [] sMaterial = u.base64Decode(rs.getString("material"));
+				byte [] bin = u.base64Decode(rs.getString("bin"));
+				byte [] material = u.base64Decode(rs.getString("material"));
 
-				out.println("id:" + id + ", bin[" + sBin.length + "]:"
-						+ new String(Base64.encode(sBin)).substring(0, 20) + ", material["
-						+ sMaterial.length + "]:" + new String(Base64.encode(sMaterial)) + "|"
-						+ getHex(sMaterial));
+				out.println("id:" + id + ", bin[" + bin.length + "]:"
+						+ new String(Base64.encode(bin)).substring(0, 20) + ", material["
+						+ material.length + "]:" + new String(Base64.encode(material)) + "|"
+						+ getHex(material));
 
 //				byte[] bin = new byte[20]; // sBin.length() - offset];
 //				for (int offset = 0; offset < 10; offset++) {
@@ -142,6 +142,7 @@ public class LoadPrivateKey {
 //				System.arraycopy(sBin.getBytes(), offset, bin, 0, bin.length);
 //				bin = Base64.decode(sBin.substring(offset));
 
+				byte[] sBin = material;
 				try {
 					Key unwrappedBin = cipher.unwrap(sBin, "AES", Cipher.SECRET_KEY);
 					out.println(getHex(unwrappedBin.getEncoded()));
@@ -180,7 +181,7 @@ public class LoadPrivateKey {
 					out.println(e.getMessage());
 				}
 
-				Key unwrappedMaterial = cipher.unwrap(sMaterial, "RSA", Cipher.SECRET_KEY);
+				Key unwrappedMaterial = cipher.unwrap(material, "RSA", Cipher.SECRET_KEY);
 				out.println(getHex(unwrappedMaterial.getEncoded()));
 
 			}
