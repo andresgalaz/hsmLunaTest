@@ -114,7 +114,11 @@ public class WrapPrivateKey {
 				cipher.init(Cipher.UNWRAP_MODE, this.wmk, algParams);
 
 				Key unwrappedExtractableKey = cipher.unwrap(wrpKey, "RSA", Cipher.PRIVATE_KEY);
-				print((PrivateKey) unwrappedExtractableKey);
+				try {
+					print((PrivateKey) unwrappedExtractableKey);
+				} catch (Exception e) {
+					out.println(e.getMessage());
+				}
 				throw new Exception("Llave ya está wrapeada OK");
 			}
 
