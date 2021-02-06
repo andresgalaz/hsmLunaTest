@@ -157,10 +157,10 @@ public class WrapPrivateKey {
 	private boolean savePrivateKeyWrapped(byte[] wrpKey) throws Exception {
 		PreparedStatement ps = null;
 		try {
-			String cSql = "UPDATE certificado SET llave_privada WHERE id=?";
+			String cSql = "UPDATE certificado SET llave_privada=? WHERE id=?";
 			ps = con.prepareStatement(cSql);
 			ps.setBytes(1, wrpKey);
-			ps.setInt(2, idCert);
+			ps.setInt(2, getIdCertificado());
 			ps.execute();
 			return true;
 		} catch (SQLException e) {
