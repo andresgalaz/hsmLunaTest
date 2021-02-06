@@ -111,7 +111,7 @@ public class WrapPrivateKey {
 				algParams.init(new IvParameterSpec(new byte[16]));
 				cipher.init(Cipher.UNWRAP_MODE, this.wmk, algParams);
 				
-				Key unwrappedExtractableKey = cipher.unwrap(wrpKey, "AES", Cipher.SECRET_KEY);
+				Key unwrappedExtractableKey = cipher.unwrap(wrpKey, "RSA", Cipher.SECRET_KEY);
 				print((PrivateKey) unwrappedExtractableKey);
 				throw new Exception("Llave ya está wrapeada OK");
 			}
