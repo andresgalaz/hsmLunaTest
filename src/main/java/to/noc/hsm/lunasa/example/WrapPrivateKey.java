@@ -1,6 +1,5 @@
 package to.noc.hsm.lunasa.example;
 
-import static java.lang.System.err;
 import static java.lang.System.out;
 
 import java.io.ByteArrayInputStream;
@@ -63,9 +62,8 @@ public class WrapPrivateKey {
 		// KeyGenerator kg = KeyGenerator.getInstance("AES", "LunaProvider");
 		// kg.init(128);
 
-
 		WrapPrivateKey me = new WrapPrivateKey();
-		
+
 		me.wmk = (LunaSecretKey) HsmManager.getSavedKey(KEK_ALIAS);
 		out.println("wmk:" + me.wmk + ", length=" + me.wmk.getEncoded().length * 8);
 		// Conecta a la BD
@@ -93,6 +91,7 @@ public class WrapPrivateKey {
 	}
 
 	private boolean loadCertificado(Connection con, int idCert) throws Exception {
+		Utilidades u = new Utilidades();
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
@@ -104,21 +103,19 @@ public class WrapPrivateKey {
 			if (!rs.next())
 				return false;
 
-			byte [] wrpKey = rs.getBytes("llave_privada");
-			if(wrpKey!=null) {
+			byte[] wrpKey = u.base64Decode(rs.getString("llave_privada"));
+			if (wrpKey != null) {
 				out.println(getHex(wrpKey));
-				
+
 				Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding", "LunaProvider");
 				AlgorithmParameters algParams = AlgorithmParameters.getInstance("IV", "LunaProvider");
 				algParams.init(new IvParameterSpec(new byte[16]));
 				cipher.init(Cipher.UNWRAP_MODE, this.wmk, algParams);
-				
+
 				Key unwrappedExtractableKey = cipher.unwrap(wrpKey, "RSA", Cipher.PRIVATE_KEY);
 				print((PrivateKey) unwrappedExtractableKey);
 				throw new Exception("Llave ya está wrapeada OK");
 			}
-			
-			Utilidades u = new Utilidades();
 
 			setAliasCert(rs.getString("alias"));
 			String certB64 = rs.getString("certificado_base64");
@@ -171,12 +168,13 @@ public class WrapPrivateKey {
 
 	private boolean savePrivateKeyWrapped(byte[] wrpKey) throws Exception {
 		out.println(getHex(wrpKey));
-		
+		Utilidades u = new Utilidades();
+
 		PreparedStatement ps = null;
 		try {
 			String cSql = "UPDATE certificado SET llave_privada=? WHERE id=?";
 			ps = con.prepareStatement(cSql);
-			ps.setBytes(1, wrpKey);
+			ps.setString(1, u.base64Encode(wrpKey));
 			ps.setInt(2, getIdCertificado());
 			ps.execute();
 			return true;
