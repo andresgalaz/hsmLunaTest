@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.AlgorithmParameters;
+import java.security.Key;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -35,6 +36,7 @@ public class WrapPrivateKey {
 	private PrivateKey privateKey;
 	private String aliasCert;
 	private Integer idCert;
+	private LunaSecretKey wmk;
 
 	private static final String KEK_ALIAS = "MSP_WK_256";
 
@@ -61,13 +63,11 @@ public class WrapPrivateKey {
 		// KeyGenerator kg = KeyGenerator.getInstance("AES", "LunaProvider");
 		// kg.init(128);
 
-		// LunaSecretKey wmkx = (LunaSecretKey) kg.generateKey();
-		LunaSecretKey wmk = (LunaSecretKey) HsmManager.getSavedKey(KEK_ALIAS);
-
-		out.println("wmk:" + wmk + ", length=" + wmk.getEncoded().length * 8);
-		// out.println("wmkx:" + wmkx + ", length=" + wmkx.getEncoded().length*8);
 
 		WrapPrivateKey me = new WrapPrivateKey();
+		
+		me.wmk = (LunaSecretKey) HsmManager.getSavedKey(KEK_ALIAS);
+		out.println("wmk:" + me.wmk + ", length=" + me.wmk.getEncoded().length * 8);
 		// Conecta a la BD
 		me.con = DriverManager.getConnection("jdbc:postgresql://" + me.host + "/" + me.nameDB, me.usuarioDB,
 				me.passwdDB);
@@ -82,20 +82,21 @@ public class WrapPrivateKey {
 		Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding", "LunaProvider");
 		AlgorithmParameters algParams = AlgorithmParameters.getInstance("IV", "LunaProvider");
 		algParams.init(new IvParameterSpec(new byte[16]));
-		cipher.init(Cipher.WRAP_MODE, wmk, algParams);
+		cipher.init(Cipher.WRAP_MODE, me.wmk, algParams);
 
 		byte[] wrappedKey = cipher.wrap(me.getPrivateKey());
 		out.println("wrappedKey:" + wrappedKey.length);
 		me.savePrivateKeyWrapped(wrappedKey);
 
 		HsmManager.logout();
+		me.con.close();
 	}
 
 	private boolean loadCertificado(Connection con, int idCert) throws Exception {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			String cSql = "SELECT alias, certificado_base64, clave FROM certificado WHERE id=?";
+			String cSql = "SELECT alias, certificado_base64, clave, llave_privada FROM certificado WHERE id=?";
 			ps = con.prepareStatement(cSql);
 			ps.setInt(1, idCert);
 			rs = ps.executeQuery();
@@ -103,6 +104,18 @@ public class WrapPrivateKey {
 			if (!rs.next())
 				return false;
 
+			byte [] wrpKey = rs.getBytes("llave_privada");
+			if(wrpKey!=null) {
+				Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding", "LunaProvider");
+				AlgorithmParameters algParams = AlgorithmParameters.getInstance("IV", "LunaProvider");
+				algParams.init(new IvParameterSpec(new byte[16]));
+				cipher.init(Cipher.UNWRAP_MODE, this.wmk, algParams);
+				
+				Key unwrappedExtractableKey = cipher.unwrap(wrpKey, "AES", Cipher.SECRET_KEY);
+				print((PrivateKey) unwrappedExtractableKey);
+				throw new Exception("Llave ya está wrapeada OK");
+			}
+			
 			Utilidades u = new Utilidades();
 
 			setAliasCert(rs.getString("alias"));
