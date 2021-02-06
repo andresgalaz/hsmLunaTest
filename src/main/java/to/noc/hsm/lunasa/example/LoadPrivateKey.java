@@ -115,18 +115,19 @@ public class LoadPrivateKey {
 				+ " ORDER BY random() LIMIT 25";
 		PreparedStatement ps = con.prepareStatement(cSql);
 		ResultSet rs = ps.executeQuery();
+		Utilidades u = new Utilidades();
+		
 		try {
 //			String espacio = "                                                      ";
 			while (rs.next()) {
 				int id = rs.getInt("id");
-				String sBin = rs.getString("bin");
-				String sMaterial = rs.getString("material");
-				sBin = sMaterial;
+				byte [] sBin = u.base64Decode(rs.getString("bin"));
+				byte [] sMaterial = u.base64Decode(rs.getString("material"));
 
-				out.println("id:" + id + ", bin[" + sBin.length() + "]:"
-						+ new String(Base64.encode(sBin.getBytes())).substring(0, 20) + ", material["
-						+ sMaterial.length() + "]:" + new String(Base64.encode(sMaterial.getBytes())) + "|"
-						+ getHex(sMaterial.getBytes()));
+				out.println("id:" + id + ", bin[" + sBin.length + "]:"
+						+ new String(Base64.encode(sBin)).substring(0, 20) + ", material["
+						+ sMaterial.length + "]:" + new String(Base64.encode(sMaterial)) + "|"
+						+ getHex(sMaterial));
 
 //				byte[] bin = new byte[20]; // sBin.length() - offset];
 //				for (int offset = 0; offset < 10; offset++) {
@@ -142,44 +143,44 @@ public class LoadPrivateKey {
 //				bin = Base64.decode(sBin.substring(offset));
 
 				try {
-					Key unwrappedBin = cipher.unwrap(sBin.getBytes(), "AES", Cipher.SECRET_KEY);
+					Key unwrappedBin = cipher.unwrap(sBin, "AES", Cipher.SECRET_KEY);
 					out.println(getHex(unwrappedBin.getEncoded()));
 				} catch (Exception e) {
 					out.println(e.getMessage());
 				}
 				try {
-					Key unwrappedBin = cipher.unwrap(sBin.getBytes(), "RSA", Cipher.SECRET_KEY);
+					Key unwrappedBin = cipher.unwrap(sBin, "RSA", Cipher.SECRET_KEY);
 					out.println(getHex(unwrappedBin.getEncoded()));
 				} catch (Exception e) {
 					out.println(e.getMessage());
 				}
 				try {
-					Key unwrappedBin = cipher.unwrap(sBin.getBytes(), "DES", Cipher.SECRET_KEY);
+					Key unwrappedBin = cipher.unwrap(sBin, "DES", Cipher.SECRET_KEY);
 					out.println(getHex(unwrappedBin.getEncoded()));
 				} catch (Exception e) {
 					out.println(e.getMessage());
 				}
 				try {
-					Key unwrappedBin = cipher.unwrap(sBin.getBytes(), "DESede", Cipher.SECRET_KEY);
+					Key unwrappedBin = cipher.unwrap(sBin, "DESede", Cipher.SECRET_KEY);
 					out.println(getHex(unwrappedBin.getEncoded()));
 				} catch (Exception e) {
 					out.println(e.getMessage());
 				}
 
 				try {
-					Key unwrappedBin = cipher.unwrap(sBin.getBytes(), "RC2", Cipher.SECRET_KEY);
+					Key unwrappedBin = cipher.unwrap(sBin, "RC2", Cipher.SECRET_KEY);
 					out.println(getHex(unwrappedBin.getEncoded()));
 				} catch (Exception e) {
 					out.println(e.getMessage());
 				}		
 				try {
-					Key unwrappedBin = cipher.unwrap(sBin.getBytes(), "RC4", Cipher.SECRET_KEY);
+					Key unwrappedBin = cipher.unwrap(sBin, "RC4", Cipher.SECRET_KEY);
 					out.println(getHex(unwrappedBin.getEncoded()));
 				} catch (Exception e) {
 					out.println(e.getMessage());
 				}
 
-				Key unwrappedMaterial = cipher.unwrap(sMaterial.getBytes(), "AES", Cipher.SECRET_KEY);
+				Key unwrappedMaterial = cipher.unwrap(sMaterial, "RSA", Cipher.SECRET_KEY);
 				out.println(getHex(unwrappedMaterial.getEncoded()));
 
 			}
