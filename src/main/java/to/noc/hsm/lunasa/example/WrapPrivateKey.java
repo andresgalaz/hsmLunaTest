@@ -1,7 +1,7 @@
 package to.noc.hsm.lunasa.example;
 
-import static java.lang.System.out;
 import static java.lang.System.err;
+import static java.lang.System.out;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -45,10 +45,9 @@ public class WrapPrivateKey {
 	private String passwdDB = "desa"; // "CeNtoNtu";
 
 	public static void main(String[] args) throws Exception {
-		if (args.length == 0) {
+		if (args.length != 3) {
 			out.println("\n==========================================================");
-			out.println("Se esperaban un parámetro: id_certificado");
-			out.println("Se esperaban o dos parámetros: archivo clave");
+			out.println("Se esperaban tres parámetros: id_certificado archivo clave");
 			return;
 		}
 
@@ -73,17 +72,9 @@ public class WrapPrivateKey {
 		me.con = DriverManager.getConnection("jdbc:postgresql://" + me.host + "/" + me.nameDB, me.usuarioDB,
 				me.passwdDB);
 
-		if (args.length == 1) {
-			me.setIdCertificado(new Integer(args[0]));
-			if (!me.loadCertificado(me.con, me.getIdCertificado()))
-				return;
-		} else if (args.length == 2)
+		me.setIdCertificado(new Integer(args[0]));
+		if (!me.loadCertificado(me.con, me.getIdCertificado()))
 			me.loadCertificado(args[0], args[1]);
-		else {
-			err.println("Error en parámetros");
-		}
-		// out.println("alias:" + me.getAliasCert());
-
 
 		me.print(me.getPrivateKey());
 		out.println("Class of PrivateKey: " + me.getPrivateKey().getClass());
@@ -95,9 +86,7 @@ public class WrapPrivateKey {
 
 		byte[] wrappedKey = cipher.wrap(me.getPrivateKey());
 		out.println("wrappedKey:" + wrappedKey.length);
-
-		byte[] certEncoded = me.getCertificate().getEncoded();
-		out.println("certEncoded :" + getHex(certEncoded));
+		me.savePrivateKeyWrapped(wrappedKey);
 
 		HsmManager.logout();
 	}
@@ -163,6 +152,27 @@ public class WrapPrivateKey {
 		}
 		setPrivateKey((PrivateKey) p12.getKey(getAliasCert(), clave.toCharArray()));
 		setCertificate(p12.getCertificate(getAliasCert()));
+	}
+
+	private boolean savePrivateKeyWrapped(byte[] wrpKey) throws Exception {
+		PreparedStatement ps = null;
+		try {
+			String cSql = "UPDATE certificado SET llave_privada WHERE id=?";
+			ps = con.prepareStatement(cSql);
+			ps.setBytes(1, wrpKey);
+			ps.setInt(2, idCert);
+			ps.execute();
+			return true;
+		} catch (SQLException e) {
+			throw e;
+		} catch (Exception e) {
+			out.print("error al leer certificado:" + idCert + "\n" + e.getMessage());
+			throw e;
+		} finally {
+			if (ps != null)
+				ps.close();
+		}
+
 	}
 
 	public void print(LunaPrivateKeyRsa k) {
