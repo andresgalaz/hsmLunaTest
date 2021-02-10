@@ -18,21 +18,22 @@ repositories {
 }
 
 dependencies {
-    compile 'com.google.guava:guava:18.0'              // provides Bytes.indexOf
-    compile 'org.apache.commons:commons-lang3:3.3.2'   // provides SerializationUtils
-    // https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk15on
+	compile 'com.google.guava:guava:18.0'              // provides Bytes.indexOf
+	compile 'org.apache.commons:commons-lang3:3.3.2'   // provides SerializationUtils
+	// https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk15on
 	compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.68'
 	// https://mvnrepository.com/artifact/org.bouncycastle/bc-fips
 	compile group: 'org.bouncycastle', name: 'bc-fips', version: '1.0.2'
-   // https://mvnrepository.com/artifact/org.postgresql/postgresql
+	// https://mvnrepository.com/artifact/org.postgresql/postgresql
 	compile group: 'org.postgresql', name: 'postgresql', version: '42.2.18'
 	// https://mvnrepository.com/artifact/org.ejbca.cesecore/cesecore-common
 	compile group: 'org.ejbca.cesecore', name: 'cesecore-common', version: '7.0.0.1'
-       
-    compile fileTree(dir: LUNA_LIB_DIR, include: 'jcprov.jar')
-    compile fileTree(dir: LUNA_LIB_DIR, include: 'axis.jar')
-    compile fileTree(dir: LUNA_LIB_DIR, include: 'LunaProvider.jar')
-}
+	       
+	compile fileTree(dir: LUNA_LIB_DIR, include: 'cesecore-common-7.0.0.1.jar')
+	compile fileTree(dir: LUNA_LIB_DIR, include: 'jcprov.jar')
+	compile fileTree(dir: LUNA_LIB_DIR, include: 'axis.jar')
+	compile fileTree(dir: LUNA_LIB_DIR, include: 'LunaProvider.jar')
+}	
 
 run {
    systemProperty 'java.library.path', LUNA_LIB_DIR 
