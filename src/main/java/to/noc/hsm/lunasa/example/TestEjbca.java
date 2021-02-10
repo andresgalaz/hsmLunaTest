@@ -2,7 +2,6 @@ package to.noc.hsm.lunasa.example;
 
 import java.net.URL;
 import java.security.SecureRandom;
-import java.security.cert.X509Certificate;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
@@ -53,7 +52,7 @@ public class TestEjbca {
 
 		CryptoProviderTools.installBCProvider();	
 		String urlstr = host+ "ejbca/ejbcaws/ejbcaws?wsdl";
-		logger.info("Paso 1");
+		logger.info("1 - Set Properties");
 		System.setProperty("javax.net.ssl.trustStore","/home/firmador/keys/truststore.jks");
 		System.setProperty("javax.net.ssl.trustStorePassword","changeit");  
 		// System.setProperty("javax.net.ssl.keyStore","/home/firmador/keys/keystore.jks");
@@ -63,14 +62,14 @@ public class TestEjbca {
 		System.setProperty("javax.net.ssl.keyStorePassword","ejbca");      
 
 		
-		logger.info("Paso 2");
+		logger.info("2 - QName");
 		QName qname = new QName("http://ws.protocol.core.ejbca.org/", "EjbcaWSService");
-		logger.info("Paso 3");
+		logger.info("3 - Service");
 		EjbcaWSService service = new EjbcaWSService(new URL(urlstr),qname);
-		logger.info("Paso 4");
+		logger.info("4 - Conexion PORT");
 		@SuppressWarnings("unused")
 		EjbcaWS ejbcaraws = service.getEjbcaWSPort();  
-		logger.info("Paso 5");
+		logger.info("5 - Finished");
 		
 	}
 
