@@ -12,7 +12,7 @@ import org.ejbca.core.protocol.ws.client.gen.EjbcaWSService;
 public class TestEjbca {
 	private static Logger   logger = Logger.getLogger( TestEjbca.class );
 	
-	private static String host = "https://10.77.40.5/";
+	private static String host = "https://10.77.40.5:8443/";
 	// private static String host = "https://ejbca/";
 
 	public static void main(String[] args) throws Exception {
@@ -20,8 +20,8 @@ public class TestEjbca {
 		CryptoProviderTools.installBCProvider();	
 		String urlstr = host+ "ejbca/ejbcaws/ejbcaws?wsdl";
 		logger.info("Paso 1");
-		// System.setProperty("javax.net.ssl.trustStore","/home/firmador/keys/truststore.jks");
-		// System.setProperty("javax.net.ssl.trustStorePassword","changeit");  
+		System.setProperty("javax.net.ssl.trustStore","/home/firmador/keys/truststore.jks");
+		System.setProperty("javax.net.ssl.trustStorePassword","changeit");  
 		// System.setProperty("javax.net.ssl.keyStore","/home/firmador/keys/keystore.jks");
 		// System.setProperty("javax.net.ssl.keyStorePassword","serverpwd");      
 		System.setProperty("javax.net.ssl.keyStore","/home/firmador/keys/superadmin.p12");
