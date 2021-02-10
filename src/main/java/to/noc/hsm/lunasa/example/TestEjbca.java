@@ -21,7 +21,7 @@ public class TestEjbca {
 		String urlstr = host+ "ejbca/ejbcaws/ejbcaws?wsdl";
 		logger.info("Paso 1");
 		System.setProperty("javax.net.ssl.trustStore","/home/firmador/keys/truststore.jks");
-		System.setProperty("javax.net.ssl.trustStorePassword","");  
+		System.setProperty("javax.net.ssl.trustStorePassword","serverpwd");  
 		System.setProperty("javax.net.ssl.keyStore","/home/firmador/keys/keystore.jks");
 		System.setProperty("javax.net.ssl.keyStorePassword","serverpwd");      
 		                             
