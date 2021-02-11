@@ -52,20 +52,18 @@ public class TestEjbca {
 		CryptoProviderTools.installBCProvider();
 		String urlstr = host + "ejbca/ejbcaws/ejbcaws";
 		logger.info("1 - Set Properties");
-		// System.setProperty("javax.net.ssl.trustStore", "/home/agalaz/workspace_sign/HSM/truststore.jks");
 		System.setProperty("javax.net.ssl.trustStore", "/home/firmador/keys/truststore.jks");
 		System.setProperty("javax.net.ssl.trustStorePassword", "changeit");
 		// System.setProperty("javax.net.ssl.keyStore","/home/firmador/keys/keystore.jks");
 		// System.setProperty("javax.net.ssl.keyStorePassword","serverpwd");
 		System.setProperty("javax.net.ssl.keyStoreType", "pkcs12");
-		// System.setProperty("javax.net.ssl.keyStore", "/home/agalaz/workspace_sign/HSM/superadmin.p12");
 		System.setProperty("javax.net.ssl.keyStore", "/home/firmador/keys/superadmin.p12");
 		System.setProperty("javax.net.ssl.keyStorePassword", "ejbca");
 
 		logger.info("2 - QName");
 		QName qname = new QName("http://ws.protocol.core.ejbca.org/", "EjbcaWSService");
 		logger.info("3 - Service");
-		fixHttpsHandler();
+		// fixHttpsHandler();
 		EjbcaWSService service = new EjbcaWSService(new URL(urlstr), qname);
 		logger.info("4 - Conexion PORT");
 		@SuppressWarnings("unused")
