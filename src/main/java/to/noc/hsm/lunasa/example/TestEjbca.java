@@ -72,6 +72,7 @@ public class TestEjbca {
 
 	}
 
+	@SuppressWarnings("unused")
 	private static void fixHttpsHandler() {
 		try {
 
