@@ -22,6 +22,9 @@ dependencies {
 	compile 'org.apache.commons:commons-lang3:3.3.2'   // provides SerializationUtils
 	// https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk15on
 	compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.68'
+	//Thanks for using https://jar-download.com
+	compile group: 'org.bouncycastle', name: 'bcprov-ext-jdk15on', version: '1.60'
+	
 	// https://mvnrepository.com/artifact/org.bouncycastle/bc-fips
 	compile group: 'org.bouncycastle', name: 'bc-fips', version: '1.0.2'
 	// https://mvnrepository.com/artifact/org.postgresql/postgresql
@@ -29,6 +32,9 @@ dependencies {
 	// https://mvnrepository.com/artifact/org.ejbca.cesecore/cesecore-common
 	compile group: 'org.ejbca.cesecore', name: 'cesecore-common', version: '7.0.0.1'
 	       
+	compile fileTree(dir: LUNA_LIB_DIR, include: 'axis.jar')
+	compile fileTree(dir: LUNA_LIB_DIR, include: 'jaxrpc.jar')
+	compile fileTree(dir: LUNA_LIB_DIR, include: 'ejbca-util.jar')
 	compile fileTree(dir: LUNA_LIB_DIR, include: 'cesecore-common-7.0.0.1.jar')
 	compile fileTree(dir: LUNA_LIB_DIR, include: 'jcprov.jar')
 	compile fileTree(dir: LUNA_LIB_DIR, include: 'axis.jar')
