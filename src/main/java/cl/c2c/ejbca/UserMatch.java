@@ -34,6 +34,46 @@ import javax.xml.bind.annotation.XmlType;
     "matchwith"
 })
 public class UserMatch {
+    public static final int MATCH_NONE                     = -1;
+
+    public static final int MATCH_WITH_USERNAME            = 0;
+    public static final int MATCH_WITH_EMAIL               = 1;
+    public static final int MATCH_WITH_STATUS              = 2; // Value must the number representation.
+    public static final int MATCH_WITH_ENDENTITYPROFILE    = 3; // Matches the profile id not profilename.
+    public static final int MATCH_WITH_CERTIFICATEPROFILE  = 4; // Matches the certificatetype id not name.
+    public static final int MATCH_WITH_CA                  = 5; // Matches the CA id not CA name.
+    public static final int MATCH_WITH_TOKEN               = 6;
+    public static final int MATCH_WITH_DN                  = 7;
+    // Subject DN fields.
+    public static final int MATCH_WITH_UID                 = 100;
+    public static final int MATCH_WITH_COMMONNAME          = 101;
+    public static final int MATCH_WITH_DNSERIALNUMBER      = 102;
+    public static final int MATCH_WITH_GIVENNAME           = 103;
+    public static final int MATCH_WITH_INITIALS            = 104;
+    public static final int MATCH_WITH_SURNAME             = 105;
+    public static final int MATCH_WITH_TITLE               = 106;
+    public static final int MATCH_WITH_ORGANIZATIONALUNIT  = 107;
+    public static final int MATCH_WITH_ORGANIZATION        = 108;
+    public static final int MATCH_WITH_LOCALITY            = 109;
+    public static final int MATCH_WITH_STATEORPROVINCE     = 110;
+    public static final int MATCH_WITH_DOMAINCOMPONENT     = 111;
+    public static final int MATCH_WITH_COUNTRY             = 112;
+    // Subject Altname Fields
+    public static final int MATCH_WITH_RFC822NAME          = 200;
+    public static final int MATCH_WITH_DNSNAME             = 201;
+    public static final int MATCH_WITH_IPADDRESS           = 202;
+    public static final int MATCH_WITH_X400ADDRESS         = 203;
+    public static final int MATCH_WITH_DIRECTORYNAME       = 204;
+    public static final int MATCH_WITH_EDIPARTYNAME        = 205;
+    public static final int MATCH_WITH_URI                 = 206;
+    public static final int MATCH_WITH_REGISTEREDID        = 207;
+    public static final int MATCH_WITH_UPN                 = 208;
+    public static final int MATCH_WITH_GUID                = 209;
+
+    public static final int MATCH_TYPE_EQUALS = 0;
+    public static final int MATCH_TYPE_BEGINSWITH = 1;
+    public static final int MATCH_TYPE_CONTAINS = 2;
+    
 
     protected int matchtype;
     protected String matchvalue;
