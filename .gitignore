@@ -42,3 +42,7 @@ nbproject/
 # Overrides
 !**/gradle/wrapper/*.jar
 !**/gradle/wrapper/*.properties
+
+
+# Otros AGALAZ
+certificado.*
