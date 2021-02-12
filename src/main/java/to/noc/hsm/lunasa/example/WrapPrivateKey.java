@@ -74,7 +74,8 @@ public class WrapPrivateKey {
 		if (!me.loadCertificado(me.con, me.getIdCertificado()))
 			me.loadCertificado(args[1], args[2]);
 
-		out.println("Class of PrivateKey: " + me.getPrivateKey());
+		out.print("Class of PrivateKey: ");
+		out.println(me.getPrivateKey());
 		me.print(me.getPrivateKey());
 
 		Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding", "LunaProvider");
