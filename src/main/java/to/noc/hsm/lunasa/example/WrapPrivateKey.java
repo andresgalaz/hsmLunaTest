@@ -106,6 +106,7 @@ public class WrapPrivateKey {
 
 			String llave_privada = rs.getString("llave_privada");
 			if (llave_privada != null && llave_privada.length() > 0) {
+				out.println("llave_privada:" + llave_privada);
 				byte[] wrpKey = u.base64Decode(llave_privada);
 				out.println(getHex(wrpKey));
 
