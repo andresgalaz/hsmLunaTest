@@ -21,9 +21,10 @@ dependencies {
 	compile 'com.google.guava:guava:18.0'              // provides Bytes.indexOf
 	compile 'org.apache.commons:commons-lang3:3.3.2'   // provides SerializationUtils
 	// https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk15on
-	compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.68'
-	//Thanks for using https://jar-download.com
-	compile group: 'org.bouncycastle', name: 'bcprov-ext-jdk15on', version: '1.60'
+	// compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.46'
+	// Thanks for using https://jar-download.com
+	// compile group: 'org.bouncycastle', name: 'bcprov-ext-jdk15on', version: '1.46'
+	compile group: 'org.bouncycastle', name: 'bcprov-jdk16', version: '1.45'
 	
 	// https://mvnrepository.com/artifact/org.bouncycastle/bc-fips
 	compile group: 'org.bouncycastle', name: 'bc-fips', version: '1.0.2'

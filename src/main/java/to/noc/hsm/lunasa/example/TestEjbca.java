@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.security.KeyPair;
 import java.security.KeyStore;
+import java.security.Security;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.List;
@@ -17,12 +18,14 @@ import javax.xml.namespace.QName;
 
 import org.apache.axis.encoding.Base64;
 import org.apache.log4j.Logger;
+import org.bouncycastle.jce.PKCS10CertificationRequest;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.cesecore.certificates.util.AlgorithmConstants;
 import org.cesecore.keys.util.KeyTools;
-import org.cesecore.util.CryptoProviderTools;
 import org.ejbca.core.model.ra.UserDataConstants;
-import org.ejbca.core.protocol.ws.CertificateHelper;
+import org.ejbca.util.CertTools;
 
+import cl.c2c.ejbca.CertificateHelper;
 import cl.c2c.ejbca.CertificateResponse;
 import cl.c2c.ejbca.EjbcaWS;
 import cl.c2c.ejbca.EjbcaWSService;
@@ -64,8 +67,9 @@ public class TestEjbca {
 	}
 
 	public static void main(String[] args) throws Exception {
-
-		CryptoProviderTools.installBCProvider();
+		Security.addProvider(new BouncyCastleProvider());
+		
+		// CryptoProviderTools.installBCProvider();
 		String urlstr = host + "ejbca/ejbcaws/ejbcaws?WSDL";
 		logger.info("1 - Set Properties");
 		System.setProperty("javax.net.ssl.trustStore", "/home/firmador/keys/truststore.jks");
@@ -73,6 +77,13 @@ public class TestEjbca {
 		System.setProperty("javax.net.ssl.keyStoreType", "pkcs12");
 		System.setProperty("javax.net.ssl.keyStore", "/home/firmador/keys/superadmin.p12");
 		System.setProperty("javax.net.ssl.keyStorePassword", "ejbca");
+		
+		logger.info("javax.net.ssl.trustStore="+System.getProperty("javax.net.ssl.trustStore"));
+		logger.info("javax.net.ssl.trustStorePassword="+System.getProperty("javax.net.ssl.trustStorePassword"));
+		logger.info("javax.net.ssl.keyStoreType="+System.getProperty("javax.net.ssl.keyStoreType"));
+		logger.info("javax.net.ssl.keyStore="+System.getProperty("javax.net.ssl.keyStore"));
+		logger.info("javax.net.ssl.keyStorePassword="+System.getProperty("javax.net.ssl.keyStorePassword"));
+		
 
 		logger.info("2 - QName");
 		QName qname = new QName("http://ws.protocol.core.ejbca.org/", "EjbcaWSService");
@@ -149,35 +160,35 @@ public class TestEjbca {
 		userNew.setStatus(UserDataConstants.STATUS_NEW);
 		ejbcaws.editUser(userNew);
 
-// ejbcaws.pkcs12Req(arg0, arg1, arg2, arg3, arg4);
+		KeyPair keys = KeyTools.genKeys("2048", AlgorithmConstants.KEYALGORITHM_RSA);
+		PKCS10CertificationRequest pkcs10Req = new PKCS10CertificationRequest("SHA256WithRSA",
+				CertTools.stringToBcX509Name("CN=NOUSED"), keys.getPublic(), null, keys.getPrivate());
 
-//		KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
-//		kpg.initialize(2048);
-//		KeyPair kp = kpg.generateKeyPair();
-		KeyPair kp = KeyTools.genKeys("2048", AlgorithmConstants.KEYALGORITHM_RSA);
+		CertificateResponse pkcs10 = ejbcaws.certificateRequest(userNew, new String(Base64.encode(pkcs10Req.getEncoded())),
+				CertificateHelper.CERT_REQ_TYPE_PKCS10, null, CertificateHelper.RESPONSETYPE_CERTIFICATE);
+				
+		// System.out.println(Base64.encode(kp.getPublic().getEncoded()));
+		// System.out.println(csr);
 
-System.out.println(Base64.encode(kp.getPublic().getEncoded()));
-System.out.println(csr);
-
-		CertificateResponse pk10 = ejbcaws.pkcs10Request(userNew.getUsername(), "123456",
-				csr, Base64.encode(kp.getPublic().getEncoded()), CertificateHelper.RESPONSETYPE_CERTIFICATE);
+		// CertificateResponse pkcs10 = ejbcaws.pkcs10Request(userNew.getUsername(), "123456", csr, null,				CertificateHelper.RESPONSETYPE_CERTIFICATE);
+		CertificateResponse certenv = pkcs10;
 
 		CertificateFactory cf = CertificateFactory.getInstance("X.509");
-		byte[] strContent = Base64.decode(new String(pk10.getData(), "UTF-8"));
+		byte[] strContent = Base64.decode(new String(certenv.getData(), "UTF-8"));
 		InputStream inputStream = new ByteArrayInputStream(strContent);
 		java.security.cert.Certificate certifivate = cf.generateCertificate(inputStream);
 		X509Certificate[] certX509 = new X509Certificate[] { (X509Certificate) certifivate };
 
 		java.security.KeyStore store = java.security.KeyStore.getInstance("PKCS12");
 		store.load(null, null);
-		store.setKeyEntry(userNew.getUsername(), kp.getPrivate(), "123456".toCharArray(), certX509);
+		store.setKeyEntry(userNew.getUsername(), keys.getPrivate(), "123456".toCharArray(), certX509);
 		FileOutputStream fOut = new FileOutputStream("certificado.p12");
 		store.store(fOut, "123456".toCharArray());
 		fOut.close();
 
 		FileOutputStream fo = new FileOutputStream("certificado.pfx");
 		fo.write("-----BEGIN CERTIFICATE-----\n".getBytes());
-		fo.write(pk10.getData());
+		fo.write(certenv.getData());
 		fo.write("-----END CERTIFICATE-----\n".getBytes());
 		fo.close();
 
@@ -216,16 +227,13 @@ System.out.println(csr);
 
 		try {
 			KeyStore p12 = KeyStore.getInstance("pkcs12");
-			p12.load(new ByteArrayInputStream(pk10.getData()), "123456".toCharArray());
+			p12.load(new ByteArrayInputStream(certenv.getData()), "123456".toCharArray());
 		} catch (Exception e) {
 			logger.error("Al crear p12", e);
 		}
 
 		// sun.security.pkcs10 csr = new
 		// sun.security.pkcs10(Base64Utils.decode(csrPem1.getBytes()));
-
-		pk10.getData();
-		logger.info(pk10);
 
 		logger.info("user creado en ejbca: " + user.getEmail());
 		// KeyPair keys = KeyTools.genKeys("2048", AlgorithmConstants.KEYALGORITHM_RSA);
@@ -237,4 +245,48 @@ System.out.println(csr);
 
 	}
 
+//	public static PKCS10CertificationRequest generatePKCS10CSR(X509Certificate cert, PrivateKey privateKey)
+//			throws CryptoException {
+//		X509Name subject = new X509Name(cert.getSubjectDN().toString());
+//
+//		try {
+//			PKCS10CertificationRequest csr = new PKCS10CertificationRequest(cert.getSigAlgName(), subject,
+//					cert.getPublicKey(), null, privateKey);
+//			if (!csr.verify()) {
+//				throw new CryptoException("Could not verify generated certification request.");
+//			}
+//
+//			return csr;
+//		} catch (GeneralSecurityException ex) {
+//			throw new CryptoException("Could not generate a certification request.", ex);
+//		}
+//	}
+
+//	public static void getCsrB64() throws FileNotFoundException, IOException {
+//		InputStream stream = new ByteArrayInputStream(csr.getBytes(StandardCharsets.UTF_8));
+//
+//		CSRInfoDecoder m = new CSRInfoDecoder();
+//
+//		Certificate cert = null;
+//		try {
+//
+//			ByteArrayInputStream bis = new ByteArrayInputStream(csr.getBytes());
+//			CertificateFactory cf = CertificateFactory.getInstance("X.509");
+//			while (bis.available() > 0) {
+//				cert = cf.generateCertificate(bis);
+//				try {
+//					System.out.println("-----BEGIN CERTIFICATE-----");
+//					System.out.println(DatatypeConverter.printBase64Binary(cert.getEncoded()));
+//					System.out.println("-----END CERTIFICATE-----");
+//					// System.out.println("key:"+cert.getPublicKey());
+//				} catch (CertificateEncodingException e) {
+//					e.printStackTrace();
+//				}
+//				System.out.println(cert.toString());
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//
+//	}
 }

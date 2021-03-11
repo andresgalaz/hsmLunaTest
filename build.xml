@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="build_ejbca_c2c" name="Crea JARS separados para insertar en Compustrom o usar como BSH">
+
+	<target name="build_ejbca_c2c">
+		<jar destfile="ejbca-c2c-client.jar">
+			<manifest>
+				<attribute name="Main-Class" value="none" />
+				<attribute name="Class-Path" value="." />
+			</manifest>
+			<fileset dir="bin/main">
+				<include name="cl/c2c/ejbca/*" />
+				<exclude name="**/Principal.*" />
+			</fileset>
+			<fileset dir="src/main/java">
+				<include name="cl/c2c/ejbca/*" />
+				<exclude name="**/Principal.*" />
+			</fileset>
+			<fileset file="changelog.txt" />
+		</jar>
+	</target>
+	<target name="install_ejbca_c2c" depends="build_ejbca_c2c">
+		<copy file="ejbca-c2c-client.jar" todir="../Firmador/libs_ext/" overwrite="true" />
+	</target>
+	
+</project>
