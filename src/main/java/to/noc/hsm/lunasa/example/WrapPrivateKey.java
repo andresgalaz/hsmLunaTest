@@ -103,7 +103,7 @@ public class WrapPrivateKey {
 
 			if (!rs.next())
 				return false;
-			out.println("alias:" + rs.getString("alias") + ", certificado_base64_len:" + rs.getString("certificado_base64").length());
+			// out.println("alias:" + rs.getString("alias") + ", certificado_base64_len:" + rs.getString("certificado_base64").length());
 
 			String llave_privada = rs.getString("llave_privada");
 			if (llave_privada != null && llave_privada.length() > 0) {
