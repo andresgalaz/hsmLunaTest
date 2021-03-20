@@ -30,4 +30,4 @@ fi
 #java -cp lib/*:build/classes/main to.noc.hsm.lunasa.example.WrapPrivateKey 52 /home/firmador/keys/testHSM.p12 Asdfgh954321
 #<< LN_2_EMPTY #LN_2_EMPTY
 #java -cp lib/*:build/classes/main to.noc.hsm.lunasa.example.TestEjbca
-java -cp lib/*:build/classes/main to.noc.hsm.lunasa.example.WrapPrivateKey 102 /home/firmador/keys/certificado_bochagavia_test.p12 123456
+java -cp lib/*:build/classes/main to.noc.hsm.lunasa.example.WrapPrivateKey 102 /home/firmador/keys/certificado_bochagavia_test_chain.p12 123456
