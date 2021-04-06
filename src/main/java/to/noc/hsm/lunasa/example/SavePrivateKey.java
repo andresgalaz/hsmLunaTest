@@ -10,7 +10,6 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
-import java.security.UnrecoverableEntryException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
@@ -22,41 +21,37 @@ import javax.crypto.SecretKey;
 
 import com.safenetinc.luna.LunaAPI;
 import com.safenetinc.luna.LunaTokenObject;
-import com.safenetinc.luna.provider.key.LunaPrivateKeyRsa;
 import com.safenetinc.luna.provider.key.LunaSecretKey;
 
 public class SavePrivateKey {
 	private static KeyStore keyStore;
 	private static boolean bHayHsm = true;
-	private Certificate certificate;
+	private Certificate[] certificate;
 	private PrivateKey privateKey;
-	private String alias;
+	private String aliasCertificado;
+	private String aliasHSM;
 	private static final String KEK_ALIAS = "MSP_WK_256";
 
-
+	/**
+	 * Graba certificado en el HSM. Recibe tre parámetros como arguentos: - Alias
+	 * para almacenar en el HSM - ruta del archivo p12 - clave del p12
+	 * 
+	 * @param args
+	 * @throws Exception
+	 */
 	public static void main(String[] args) throws Exception {
-		
-//		if (args.length == 0) {
-//			out.println("Faltan argumentos. Modo de uso:");
-//			out.println("\t-c <alias>       # crea la KEK con el <alias>");
-//			out.println("\t-v <alias>       # verifica si existe la KEK");
-//			return;
-//		}
-//		out.println("\n==========================================================");
-//		if ("-c".equalsIgnoreCase(args[0])) {
-//			// Crea una KEK
-//			creaKek(args[1]);
-//			return;
-//		}
-//		if ("-v".equalsIgnoreCase(args[0])) {
-//			// Crea una KEK
-//			verificaKek(args[1]);
-//			return;
-//		}
-//		if (true) {
-//			out.println("Se esperaban dos un parámetros: archivo y password");
-//			return;
-//		}
+
+		if (args.length != 3) {
+			out.println("Error en argumentos. Se requiere:");
+			out.println("\tAlias para almacenar en el HSM");
+			out.println("\tRuta y nombre p12");
+			out.println("\tContraseña del p12");
+			return;
+		}
+		String cAliasHSM = args[0];
+		String cArchivoP12 = args[1];
+		String cPassword = args[2];
+
 		SavePrivateKey me = new SavePrivateKey();
 
 		if (bHayHsm) {
@@ -65,42 +60,27 @@ public class SavePrivateKey {
 			keyStore = KeyStore.getInstance("Luna");
 			keyStore.load(null, null);
 		}
-		if (HsmManager.hasSavedKey(KEK_ALIAS)) {
-			HsmManager.deleteKey(KEK_ALIAS);
-		}
+		LunaSecretKey wmk = (LunaSecretKey) HsmManager.getSavedKey(KEK_ALIAS);
 
-		KeyGenerator kg = KeyGenerator.getInstance("AES", "LunaProvider");
-		kg.init(256);
-
-		LunaSecretKey wmk = (LunaSecretKey) kg.generateKey();
-		HsmManager.saveKey(KEK_ALIAS, wmk);
-		
-		// SecretKey wmk = (SecretKey) HsmManager.getSavedKey(KEK_ALIAS);		
 		out.println("wmk:" + wmk + ", length=" + wmk.getEncoded().length);
-		
-		if(wmk!=null)
-			return;
-
 		out.println("\n");
-		me.loadCertificado(args[0], args[1]);
-		out.println("alias:" + me.getAlias());
+
+		me.loadCertificado(cArchivoP12, cPassword);
+		me.setAliasHSM(cAliasHSM);
+		out.println("alias certificado:" + me.getAliasCertificado());
 		me.print(me.getPrivateKey());
 
 		// Limpia
-		deleteKey(me.getAlias());
+		deleteKey(me.getAliasHSM());
 		// Graba
-		saveKey(me.getAlias(), me.getPrivateKey(), new Certificate[] { me.getCertificate() });
+		saveKey(me.getAliasHSM(), me.getPrivateKey(), me.getCertificate());
 
-		// Recupera
-		LunaPrivateKeyRsa kLoc = (LunaPrivateKeyRsa) getSavedKey(me.getAlias());
-		me.print(kLoc);
-
-		Certificate cer = keyStore.getCertificate(me.getAlias());
-		out.println(cer);
+		out.println("Certificado Grabado OK");
 
 		HsmManager.logout();
 	}
 
+	@SuppressWarnings("unused")
 	private static void creaKek(String alias) throws Exception {
 		HsmManager.login();
 		HsmManager.setSecretKeysExtractable(true);
@@ -123,6 +103,7 @@ public class SavePrivateKey {
 		HsmManager.logout();
 	}
 
+	@SuppressWarnings("unused")
 	private static void verificaKek(String alias) throws Exception {
 		HsmManager.login();
 		HsmManager.setSecretKeysExtractable(true);
@@ -146,44 +127,33 @@ public class SavePrivateKey {
 
 		Enumeration<String> e = p12.aliases();
 		while (e.hasMoreElements()) {
-			setAlias(e.nextElement());
+			setAliasCertificado(e.nextElement());
 		}
-		setPrivateKey((PrivateKey) p12.getKey(getAlias(), clave.toCharArray()));
-		setCertificate(p12.getCertificate(getAlias()));
+		setPrivateKey((PrivateKey) p12.getKey(getAliasCertificado(), clave.toCharArray()));
+		setCertificate(p12.getCertificateChain(getAliasCertificado()));
 	}
 
-	public static void deleteKey(String alias) throws KeyStoreException {
+	private static void deleteKey(String alias) throws KeyStoreException {
 		if (bHayHsm)
 			keyStore.deleteEntry(alias);
 	}
 
-	public static void saveKey(String alias, Key key, Certificate[] chain) throws KeyStoreException {
+	private static void saveKey(String alias, Key key, Certificate[] chain) throws KeyStoreException {
 		keyStore.setKeyEntry(alias, key, null, chain);
 	}
 
-	public static Key getSavedKey(String alias)
-			throws UnrecoverableEntryException, NoSuchAlgorithmException, KeyStoreException {
-		return keyStore.getKey(alias, null);
-	}
-
-	public void print(LunaPrivateKeyRsa k) {
-		out.println("Class:" + k.getClass().getName());
-		out.println("Modulus:" + k.getModulus().toString());
-		// out.println("Exponent:" + k.getPrivateExponent().toString());
-	}
-
-	public void print(PrivateKey k) {
+	private void print(PrivateKey k) {
 		out.println("Class:" + k.getClass().getName());
 		RSAPrivateKey rsaKey = (RSAPrivateKey) k;
 		out.println("Modulus:" + rsaKey.getModulus().toString());
 		out.println("Exponent:" + rsaKey.getPrivateExponent().toString());
 	}
 
-	public Certificate getCertificate() {
+	public Certificate[] getCertificate() {
 		return certificate;
 	}
 
-	public void setCertificate(Certificate certificate) {
+	public void setCertificate(Certificate[] certificate) {
 		this.certificate = certificate;
 	}
 
@@ -195,12 +165,20 @@ public class SavePrivateKey {
 		this.privateKey = privateKey;
 	}
 
-	public String getAlias() {
-		return alias;
+	public String getAliasCertificado() {
+		return aliasCertificado;
 	}
 
-	public void setAlias(String alias) {
-		this.alias = alias;
+	public void setAliasCertificado(String aliasCertificado) {
+		this.aliasCertificado = aliasCertificado;
+	}
+
+	public String getAliasHSM() {
+		return aliasHSM;
+	}
+
+	public void setAliasHSM(String aliasHSM) {
+		this.aliasHSM = aliasHSM;
 	}
 
 }

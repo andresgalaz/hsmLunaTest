@@ -3,6 +3,7 @@ package to.noc.hsm.lunasa.example;
 import static java.lang.System.out;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.URL;
@@ -164,10 +165,11 @@ public class TestEjbca {
 		// userNew.setStatus(UserDataConstants.STATUS_GENERATED);
 		// ejbcaws.editUser(userNew);
 
-		userNew = result.get(0);
+		userNew = result.get(1);
 		// userNew.setTokenType("FAILED");
 
 		userNew.setStatus(UserDataConstants.STATUS_NEW);
+		userNew.setEndTime("2030-04-04 04:04:04+00:00");
 		userNew.setEndEntityProfileName("FEA_PROFILE");
 		ejbcaws.editUser(userNew);
 
@@ -186,7 +188,11 @@ public class TestEjbca {
 		X509Certificate[] certX509 = new X509Certificate[certChain.size()];
 		CertificateFactory cf = CertificateFactory.getInstance("X.509");
 		for (int i = 0; i < certChain.size(); i++) {
-			byte[] strContent = Base64.decode(new String(certChain.get(i).getCertificateData(), "UTF-8"));
+			byte[] strContent = null;
+			if(i==0)
+				strContent = Base64.decode(new String(pkcs10.getData(), "UTF-8"));
+			else
+				strContent = Base64.decode(new String(certChain.get(i).getCertificateData(), "UTF-8"));
 			InputStream inputStream = new ByteArrayInputStream(strContent);
 			java.security.cert.Certificate certifivate = cf.generateCertificate(inputStream);
 			certX509[i] = (X509Certificate) certifivate;
@@ -201,7 +207,8 @@ public class TestEjbca {
 		java.security.KeyStore store = java.security.KeyStore.getInstance("PKCS12");
 		store.load(null, null);
 		store.setKeyEntry(userNew.getUsername(), keys.getPrivate(), "123456".toCharArray(), certX509);
-		FileOutputStream fOut = new FileOutputStream("certificado_7.p12");
+		FileOutputStream fOut = new FileOutputStream("certificado_8.p12");
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		store.store(fOut, "123456".toCharArray());
 		fOut.close();
 
