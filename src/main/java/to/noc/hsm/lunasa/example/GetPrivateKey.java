@@ -58,7 +58,7 @@ public class GetPrivateKey {
 		LunaPrivateKeyRsa kLoc = (LunaPrivateKeyRsa) getSavedKey(me.getAliasHSM());
 		me.print(kLoc);
 
-		Certificate cer = keyStore.getCertificate(me.getAliasCertificado());
+		Certificate cer = keyStore.getCertificate(me.getAliasHSM()); // Certificado());
 		out.println(cer);
 
 		HsmManager.logout();
