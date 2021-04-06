@@ -3,6 +3,7 @@ package to.noc.hsm.lunasa.example;
 import static java.lang.System.out;
 
 import java.io.ByteArrayOutputStream;
+import java.io.StringWriter;
 import java.security.AlgorithmParameters;
 import java.security.Key;
 import java.security.KeyStore;
@@ -18,6 +19,8 @@ import java.sql.SQLException;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
+
+import org.bouncycastle.openssl.PEMWriter;
 
 import com.safenetinc.luna.provider.key.LunaPrivateKeyRsa;
 import com.safenetinc.luna.provider.key.LunaSecretKey;
@@ -106,7 +109,6 @@ public class CertificateFromHSM2DB {
 	}
 
 	private boolean updateCertificado() throws Exception {
-
 		Utilidades u = new Utilidades();
 
 		PreparedStatement ps = null;
@@ -114,7 +116,7 @@ public class CertificateFromHSM2DB {
 			String cSql = "UPDATE certificado SET llave_privada=?, certificado_base64=? WHERE id=?";
 			ps = con.prepareStatement(cSql);
 			ps.setString(1, u.base64Encode(wrapPrivateKey()));
-			ps.setString(2, u.base64Encode(getCertificate()[0].getEncoded()));
+			ps.setString(2, getCertificadoPEM());
 			ps.setInt(3, getIdCertificado());
 			ps.execute();
 			return true;
@@ -127,6 +129,17 @@ public class CertificateFromHSM2DB {
 			if (ps != null)
 				ps.close();
 		}
+	}
+
+	private String getCertificadoPEM() throws Exception {
+		StringWriter sw = new StringWriter();
+		PEMWriter pem = new PEMWriter(sw);
+
+		for (int i = 0; i < getCertificate().length; i++) {
+			pem.writeObject(getCertificate()[i]);
+		}
+		out.println(sw.toString());
+		return sw.toString();
 	}
 
 	@SuppressWarnings("unused")
