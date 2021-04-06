@@ -40,6 +40,7 @@ dependencies {
 	compile fileTree(dir: LUNA_LIB_DIR, include: 'jcprov.jar')
 	compile fileTree(dir: LUNA_LIB_DIR, include: 'axis.jar')
 	compile fileTree(dir: LUNA_LIB_DIR, include: 'LunaProvider.jar')
+	compile fileTree(dir: LUNA_LIB_DIR, include: 'bcprov-jdk16-1.45.jar' );
 }	
 
 run {
