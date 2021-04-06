@@ -66,10 +66,13 @@ public class GetPrivateKey {
 
 	private void print() {
 		LunaPrivateKeyRsa k = (LunaPrivateKeyRsa) getPrivateKey();
+		if (k == null) {
+			out.println("No hay certificado definido para alias:" + getAliasHSM());
+			return;
+		}
+		Certificate[] cerChain = getCertificate();
 		out.println("Class:" + k.getClass().getName());
 		out.println("Modulus:" + k.getModulus().toString());
-		// out.println("Exponent:" + k.getPrivateExponent().toString());
-		Certificate[] cerChain = getCertificate();
 		out.println("Cadena:" + cerChain.length);
 		out.println(cerChain[0]);
 	}
