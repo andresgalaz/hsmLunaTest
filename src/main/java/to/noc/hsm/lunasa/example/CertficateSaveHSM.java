@@ -23,7 +23,7 @@ import com.safenetinc.luna.LunaAPI;
 import com.safenetinc.luna.LunaTokenObject;
 import com.safenetinc.luna.provider.key.LunaSecretKey;
 
-public class SavePrivateKey {
+public class CertficateSaveHSM {
 	private static KeyStore keyStore;
 	private static boolean bHayHsm = true;
 	private Certificate[] certificate;
@@ -52,7 +52,7 @@ public class SavePrivateKey {
 		String cArchivoP12 = args[1];
 		String cPassword = args[2];
 
-		SavePrivateKey me = new SavePrivateKey();
+		CertficateSaveHSM me = new CertficateSaveHSM();
 
 		if (bHayHsm) {
 			HsmManager.login();

@@ -13,7 +13,7 @@ import java.security.cert.Certificate;
 import com.safenetinc.luna.provider.key.LunaPrivateKeyRsa;
 import com.safenetinc.luna.provider.key.LunaSecretKey;
 
-public class GetPrivateKey {
+public class CertificateGetFromHSM {
 	private static KeyStore keyStore;
 	private static boolean bHayHsm = true;
 	private Certificate[] certificate;
@@ -35,7 +35,7 @@ public class GetPrivateKey {
 			out.println("\tAlias certificado almacenado en el HSM");
 			return;
 		}
-		GetPrivateKey me = new GetPrivateKey();
+		CertificateGetFromHSM me = new CertificateGetFromHSM();
 		me.setAliasHSM(args[0]);
 
 		if (bHayHsm) {
