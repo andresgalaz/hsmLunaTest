@@ -18,7 +18,6 @@ public class GetPrivateKey {
 	private static boolean bHayHsm = true;
 	private Certificate[] certificate;
 	private PrivateKey privateKey;
-	private String aliasCertificado;
 	private String aliasHSM;
 	private static final String KEK_ALIAS = "MSP_WK_256";
 
@@ -31,15 +30,13 @@ public class GetPrivateKey {
 	 */
 	public static void main(String[] args) throws Exception {
 
-		if (args.length != 2) {
+		if (args.length != 1) {
 			out.println("Error en argumentos. Se requiere:");
-			out.println("\tAlias para almacenar en el HSM");
-			out.println("\tAlias del certificado");
+			out.println("\tAlias certificado almacenado en el HSM");
 			return;
 		}
 		GetPrivateKey me = new GetPrivateKey();
 		me.setAliasHSM(args[0]);
-		me.setAliasCertificado(args[1]);
 
 		if (bHayHsm) {
 			HsmManager.login();
@@ -53,14 +50,12 @@ public class GetPrivateKey {
 		out.println("\n");
 
 		out.println("alias HSM:" + me.getAliasHSM());
-		out.println("alias certificado:" + me.getAliasCertificado());
 		// Recupera
 		LunaPrivateKeyRsa kLoc = (LunaPrivateKeyRsa) getSavedKey(me.getAliasHSM());
-		me.print(kLoc);
+		me.setPrivateKey(kLoc);
 
-		Certificate cer = keyStore.getCertificate(me.getAliasHSM()); // Certificado());
-		out.println(cer);
-
+		me.setCertificate(keyStore.getCertificateChain(me.getAliasHSM())); // Certificado());
+		me.print();
 		HsmManager.logout();
 	}
 
@@ -69,10 +64,14 @@ public class GetPrivateKey {
 		return keyStore.getKey(alias, null);
 	}
 
-	private void print(LunaPrivateKeyRsa k) {
+	private void print() {
+		LunaPrivateKeyRsa k = (LunaPrivateKeyRsa) getPrivateKey();
 		out.println("Class:" + k.getClass().getName());
 		out.println("Modulus:" + k.getModulus().toString());
 		// out.println("Exponent:" + k.getPrivateExponent().toString());
+		Certificate[] cerChain = getCertificate();
+		out.println("Cadena:" + cerChain.length);
+		out.println(cerChain[0]);
 	}
 
 	public Certificate[] getCertificate() {
@@ -89,14 +88,6 @@ public class GetPrivateKey {
 
 	public void setPrivateKey(PrivateKey privateKey) {
 		this.privateKey = privateKey;
-	}
-
-	public String getAliasCertificado() {
-		return aliasCertificado;
-	}
-
-	public void setAliasCertificado(String aliasCertificado) {
-		this.aliasCertificado = aliasCertificado;
 	}
 
 	public String getAliasHSM() {
