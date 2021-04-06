@@ -46,7 +46,7 @@ public class CertificateFromHSM2DB {
 			out.println("Error en argumentos. Se requiere:");
 			out.println("\tAlias certificado almacenado en el HSM");
 			out.println("\tID registro tabla Certificado");
-			out.println("\tPassword Certidicado");
+			out.println("\tPassword Certificado");
 			return;
 		}
 		// Conecta a la BD
@@ -114,7 +114,7 @@ public class CertificateFromHSM2DB {
 			String cSql = "UPDATE certificado SET llave_privada=?, certificado_base64=? WHERE id=?";
 			ps = con.prepareStatement(cSql);
 			ps.setString(1, u.base64Encode(wrapPrivateKey()));
-			ps.setString(2, u.base64Encode(getCertificadoP12()));
+			ps.setString(2, u.base64Encode(getCertificate()[0].getEncoded()));
 			ps.setInt(2, getIdCertificado());
 			ps.execute();
 			return true;
@@ -129,6 +129,7 @@ public class CertificateFromHSM2DB {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private byte[] getCertificadoP12() throws Exception {
 		KeyStore p12 = KeyStore.getInstance("pkcs12");
 		p12.load(null, null);
