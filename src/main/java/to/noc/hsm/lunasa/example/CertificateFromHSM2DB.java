@@ -115,7 +115,7 @@ public class CertificateFromHSM2DB {
 			ps = con.prepareStatement(cSql);
 			ps.setString(1, u.base64Encode(wrapPrivateKey()));
 			ps.setString(2, u.base64Encode(getCertificate()[0].getEncoded()));
-			ps.setInt(2, getIdCertificado());
+			ps.setInt(3, getIdCertificado());
 			ps.execute();
 			return true;
 		} catch (SQLException e) {
