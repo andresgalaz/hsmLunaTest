@@ -20,8 +20,6 @@ import java.sql.SQLException;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 
-import org.bouncycastle.openssl.PEMWriter;
-
 import com.safenetinc.luna.provider.key.LunaPrivateKeyRsa;
 import com.safenetinc.luna.provider.key.LunaSecretKey;
 
@@ -132,11 +130,12 @@ public class CertificateFromHSM2DB {
 	}
 
 	private String getCertificadoPEM() throws Exception {
+		Utilidades u = new Utilidades();
 		StringWriter sw = new StringWriter();
-		PEMWriter pem = new PEMWriter(sw);
-
 		for (int i = 0; i < getCertificate().length; i++) {
-			pem.writeObject(getCertificate()[i]);
+			sw.write("-----BEGIN CERTIFICATE-----\n");
+			sw.write(u.base64Encode(getCertificate()[i].getEncoded()).replaceAll("(.{64})", "$1\n"));
+			sw.write("\n-----END CERTIFICATE-----\n");
 		}
 		out.println(sw.toString());
 		return sw.toString();
