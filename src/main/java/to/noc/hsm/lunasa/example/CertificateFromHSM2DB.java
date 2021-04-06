@@ -83,7 +83,7 @@ public class CertificateFromHSM2DB {
 		me.print();
 
 		me.updateCertificado();
-		con.commit();
+		con.close();
 
 		HsmManager.logout();
 	}
