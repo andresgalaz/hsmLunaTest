@@ -164,12 +164,12 @@ public class TestEjbca {
 		// userNew.setStatus(UserDataConstants.STATUS_GENERATED);
 		// ejbcaws.editUser(userNew);
 
-		userNew = result.get(4);
+		userNew = result.get(0);
 		// userNew.setTokenType("FAILED");
 		// userNew.setCaName("MINSEGPRES_FEA_G3");
-		userNew.setEmail("bochagavia2@digital.gob.cl");
-		userNew.setStatus(UserDataConstants.STATUS_REVOKED);
-		// userNew.setStatus(UserDataConstants.STATUS_NEW);
+		// userNew.setEmail("bochagavia2@digital.gob.cl");
+		// userNew.setStatus(UserDataConstants.STATUS_REVOKED);
+		userNew.setStatus(UserDataConstants.STATUS_NEW);
 		// userNew.setEndTime("2020-04-14 14:14:14+00:00");
 		// userNew.setEndEntityProfileName("FEA_PROFILE");
 		ejbcaws.editUser(userNew);
@@ -197,7 +197,7 @@ public class TestEjbca {
 		java.security.KeyStore store = java.security.KeyStore.getInstance("PKCS12");
 		store.load(null, null);
 		store.setKeyEntry(userNew.getUsername(), keys.getPrivate(), "123456".toCharArray(), certX509);
-		FileOutputStream fOut = new FileOutputStream("certificado_bOchagavia.p12");
+		FileOutputStream fOut = new FileOutputStream("certificado_bOchagavia_2.p12");
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		store.store(fOut, "123456".toCharArray());
 		fOut.close();
