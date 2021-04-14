@@ -40,10 +40,10 @@ public class WrapPrivateKey {
 	private static final String KEK_ALIAS = "MSP_WK_256";
 
 	private Connection con;
-	private String host = "10.77.40.53:5432";
+	private String host = "10.77.40.57:6543"; // "10.77.40.53:5432";
 	private String nameDB = "firmador";
 	private String usuarioDB = "firmador";
-	private String passwdDB = "desa"; // "CeNtoNtu";
+	private String passwdDB = "e20cd9d5249137a56a2b853d40469a8e"; // "desa""CeNtoNtu";
 
 	public static void main(String[] args) throws Exception {
 		if (args.length != 3) {

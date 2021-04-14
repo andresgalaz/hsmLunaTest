@@ -39,7 +39,7 @@ public class TestEjbca {
 	private static Logger logger = Logger.getLogger(TestEjbca.class);
 
 	private static String host = "https://10.77.40.5/";
-	// private static String host = "https://54.67.117.183:8443/";
+	// private static String host = "https://54.193.58.61:8443/";
 
 	static {
 		// Permite que no valide la IP
@@ -47,7 +47,7 @@ public class TestEjbca {
 			public boolean verify(String hostname, SSLSession session) {
 				if (hostname.equals("10.77.40.5"))
 					return true;
-				if (hostname.equals("54.67.117.183"))
+				if (hostname.equals("54.193.58.61"))
 					return true;
 
 				return false;
@@ -87,7 +87,6 @@ public class TestEjbca {
 		// fixHttpsHandler();
 		EjbcaWSService service = new EjbcaWSService(new URL(urlstr), qname);
 		logger.info("4 - Conexion PORT");
-		@SuppressWarnings("unused")
 		EjbcaWS ejbcaws = service.getEjbcaWSPort();
 		logger.info("5 - Finished");
 
@@ -95,7 +94,8 @@ public class TestEjbca {
 		usermatch.setMatchwith(UserMatch.MATCH_WITH_DN);
 		usermatch.setMatchtype(UserMatch.MATCH_TYPE_CONTAINS);
 		usermatch.setMatchvalue("bochagavia@digital.gob.cl");
-//		usermatch.setMatchvalue("cha");
+		// usermatch.setMatchvalue("ivan.rodriguez@mop.gov.cl");
+		// usermatch.setMatchvalue("digital.gob.cl");
 		List<UserDataVOWS> result = ejbcaws.findUser(usermatch);
 
 		logger.info("8 - Genera pkcs10");
@@ -149,40 +149,37 @@ public class TestEjbca {
 		// UserDataVOWS userNew = result.get(2);
 
 		UserDataVOWS userNew = new UserDataVOWS();
-//		userNew.setUsername("bochagavia_test_2");
-//		userNew.setSubjectDN(
-//				"E=bochagavia@digital.gob.cl,CN=Baltazar Ochagavía B Test 2,SN=18395565-9,T=Consultor,O=Organismo_Test_2019,C=CL");
-//		userNew.setCaName("TEST_01");
-//		userNew.setEmail("bochagavia@digital.gob.cl");
-//		userNew.setSubjectAltName("1.3.6.1.4.1.8321.1=18395565-9");
-//		userNew.setEndEntityProfileName("FEA_PROFILE");
-//		userNew.setCertificateProfileName("FIRMA_ELECTRONICA_AVANZADA_NEW");
-//		userNew.setPassword("123456");
-//		userNew.setTokenType("INPROCESS");
+		// userNew.setUsername("bochagavia_test_2");
+		// userNew.setSubjectDN("E=bochagavia@digital.gob.cl,CN=Baltazar Ochagavía B Test 2,SN=18395565-9,T=Consultor,O=Organismo_Test_2019,C=CL");
+		// userNew.setCaName("TEST_01");
+		// userNew.setEmail("bochagavia@digital.gob.cl");
+		// userNew.setSubjectAltName("1.3.6.1.4.1.8321.1=18395565-9");
+		// userNew.setEndEntityProfileName("FEA_PROFILE");
+		// userNew.setCertificateProfileName("FIRMA_ELECTRONICA_AVANZADA_NEW");
+		// userNew.setPassword("123456");
+		// userNew.setTokenType("INPROCESS");
 		// ejbcaws.editUser(userNew);
 		// userNew = result.get(2);
 		// userNew.setTokenType("FAILED");
 		// userNew.setStatus(UserDataConstants.STATUS_GENERATED);
 		// ejbcaws.editUser(userNew);
 
-		userNew = result.get(1);
+		userNew = result.get(4);
 		// userNew.setTokenType("FAILED");
-
-		userNew.setStatus(UserDataConstants.STATUS_NEW);
-		userNew.setEndTime("2030-04-04 04:04:04+00:00");
-		userNew.setEndEntityProfileName("FEA_PROFILE");
+		// userNew.setCaName("MINSEGPRES_FEA_G3");
+		userNew.setEmail("bochagavia2@digital.gob.cl");
+		userNew.setStatus(UserDataConstants.STATUS_REVOKED);
+		// userNew.setStatus(UserDataConstants.STATUS_NEW);
+		// userNew.setEndTime("2020-04-14 14:14:14+00:00");
+		// userNew.setEndEntityProfileName("FEA_PROFILE");
 		ejbcaws.editUser(userNew);
 
 		KeyPair keys = KeyTools.genKeys("2048", AlgorithmConstants.KEYALGORITHM_RSA);
 		PKCS10CertificationRequest pkcs10Req = new PKCS10CertificationRequest("SHA256WithRSA",
 				CertTools.stringToBcX509Name("CN=NOUSED"), keys.getPublic(), null, keys.getPrivate());
-//		PKCS10CertificationRequest pkcs10Req = new PKCS10CertificationRequest("SHA256WithRSA",
-//				CertTools.stringToBcX509Name("CN=FEA_PROFILE"), keys.getPublic(), null, keys.getPrivate());
-
 		CertificateResponse pkcs10 = ejbcaws.certificateRequest(userNew,
 				new String(Base64.encode(pkcs10Req.getEncoded())), CertificateHelper.CERT_REQ_TYPE_PKCS10, null,
 				CertificateHelper.RESPONSETYPE_CERTIFICATE);
-
 		// AGV: AQUI ESTA LA CADENA
 		List<Certificate> certChain = ejbcaws.getLastCertChain(userNew.getUsername());
 		X509Certificate[] certX509 = new X509Certificate[certChain.size()];
@@ -197,20 +194,12 @@ public class TestEjbca {
 			java.security.cert.Certificate certifivate = cf.generateCertificate(inputStream);
 			certX509[i] = (X509Certificate) certifivate;
 		}
-
-//		CertificateFactory cf = CertificateFactory.getInstance("X.509");
-//		byte[] strContent = Base64.decode(new String(pkcs10.getData(), "UTF-8"));
-//		InputStream inputStream = new ByteArrayInputStream(strContent);
-//		java.security.cert.Certificate certifivate = cf.generateCertificate(inputStream);
-//		X509Certificate[] certX509 = new X509Certificate[] { (X509Certificate) certifivate };
-
 		java.security.KeyStore store = java.security.KeyStore.getInstance("PKCS12");
 		store.load(null, null);
 		store.setKeyEntry(userNew.getUsername(), keys.getPrivate(), "123456".toCharArray(), certX509);
-		FileOutputStream fOut = new FileOutputStream("certificado_8.p12");
+		FileOutputStream fOut = new FileOutputStream("certificado_bOchagavia.p12");
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		store.store(fOut, "123456".toCharArray());
 		fOut.close();
-
 	}
 }
