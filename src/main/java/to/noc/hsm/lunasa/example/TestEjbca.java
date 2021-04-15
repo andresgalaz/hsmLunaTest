@@ -93,9 +93,9 @@ public class TestEjbca {
 		UserMatch usermatch = new UserMatch();
 		usermatch.setMatchwith(UserMatch.MATCH_WITH_DN);
 		usermatch.setMatchtype(UserMatch.MATCH_TYPE_CONTAINS);
-		usermatch.setMatchvalue("bochagavia@digital.gob.cl");
+		// usermatch.setMatchvalue("bochagavia@digital.gob.cl");
 		// usermatch.setMatchvalue("ivan.rodriguez@mop.gov.cl");
-		// usermatch.setMatchvalue("digital.gob.cl");
+		usermatch.setMatchvalue("digital.gob.cl");
 		List<UserDataVOWS> result = ejbcaws.findUser(usermatch);
 
 		logger.info("8 - Genera pkcs10");
@@ -115,7 +115,6 @@ public class TestEjbca {
 		out.print("Username\n");
 		for (int i = 0; i < result.size(); i++) {
 			UserDataVOWS user = result.get(i);
-
 			out.print(user.getCaName());
 			out.print('\t');
 			out.print(user.getCardNumber());
@@ -148,7 +147,8 @@ public class TestEjbca {
 
 		// UserDataVOWS userNew = result.get(2);
 
-		UserDataVOWS userNew = new UserDataVOWS();
+		UserDataVOWS userNew;
+//		userNew = new UserDataVOWS();
 //		userNew.setUsername("bochagavia_test_2");
 //		userNew.setSubjectDN("E=bochagavia@digital.gob.cl,CN=Baltazar Ochagavía B Test 2,SN=18395565-9,T=Consultor,O=Organismo_Test_2019,C=CL");
 //		userNew.setCaName("MINSEGPRES_FEA_G3");
@@ -164,18 +164,18 @@ public class TestEjbca {
 //		userNew = result.get(0);
 //		userNew.setStatus(UserDataConstants.STATUS_REVOKED);
 //		ejbcaws.editUser(userNew);
-		userNew = result.get(1);
-		userNew.setStatus(UserDataConstants.STATUS_REVOKED);
-		ejbcaws.editUser(userNew);
-		userNew = result.get(2);
-		userNew.setStatus(UserDataConstants.STATUS_REVOKED);
-		ejbcaws.editUser(userNew);
-		userNew = result.get(3);
-		userNew.setStatus(UserDataConstants.STATUS_REVOKED);
-		ejbcaws.editUser(userNew);
-		userNew = result.get(4);
-		userNew.setStatus(UserDataConstants.STATUS_REVOKED);
-		ejbcaws.editUser(userNew);
+//		userNew = result.get(1);
+//		userNew.setStatus(UserDataConstants.STATUS_REVOKED);
+//		ejbcaws.editUser(userNew);
+//		userNew = result.get(2);
+//		userNew.setStatus(UserDataConstants.STATUS_REVOKED);
+//		ejbcaws.editUser(userNew);
+//		userNew = result.get(3);
+//		userNew.setStatus(UserDataConstants.STATUS_REVOKED);
+//		ejbcaws.editUser(userNew);
+//		userNew = result.get(4);
+//		userNew.setStatus(UserDataConstants.STATUS_REVOKED);
+//		ejbcaws.editUser(userNew);
 
 		int nIdxUser = 0;
 		userNew = result.get(nIdxUser);

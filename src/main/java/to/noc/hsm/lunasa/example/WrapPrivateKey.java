@@ -51,7 +51,6 @@ public class WrapPrivateKey {
 			out.println("Se esperaban tres parámetros: id_certificado archivo clave");
 			return;
 		}
-
 		out.println("\n==========================================================");
 
 		// Security.addProvider(new BouncyCastleProvider());
